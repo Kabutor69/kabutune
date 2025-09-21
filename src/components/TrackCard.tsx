@@ -67,23 +67,23 @@ export function TrackCard({ track, showFavorite = true }: TrackCardProps) {
 
   return (
     <div
-      className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-gray-200/50 dark:border-gray-700/50 hover:bg-white dark:hover:bg-gray-800 hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-300 overflow-hidden cursor-pointer"
+      className="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-2xl sm:rounded-3xl border border-gray-200/60 dark:border-gray-700/60 hover:bg-white dark:hover:bg-gray-800 hover:shadow-2xl hover:shadow-blue-500/20 hover:-translate-y-2 transition-all duration-500 overflow-hidden cursor-pointer"
       onClick={handlePlay}
     >
-      <div className="relative aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-gray-700 dark:to-gray-600">
+      <div className="relative aspect-square rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-gray-700 dark:to-gray-600">
         <Image
           src={track.thumbnail}
           alt={track.title}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          className="object-cover group-hover:scale-110 transition-transform duration-700"
           unoptimized
           sizes="(max-width: 480px) 50vw, (max-width: 768px) 33vw, (max-width: 1200px) 25vw, 20vw"
         />
 
         {/* Play Button Overlay */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transform scale-0 group-hover:scale-100 transition-all duration-300 hover:scale-110">
-            <Play className="h-4 w-4 sm:h-5 sm:w-5 text-gray-900 fill-current ml-0.5" />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-500 flex items-center justify-center">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/95 hover:bg-white rounded-full flex items-center justify-center shadow-2xl hover:shadow-3xl transform scale-0 group-hover:scale-100 transition-all duration-500 hover:scale-110">
+            <Play className="h-5 w-5 sm:h-6 sm:w-6 text-gray-900 fill-current ml-0.5" />
           </div>
         </div>
 
@@ -91,10 +91,10 @@ export function TrackCard({ track, showFavorite = true }: TrackCardProps) {
         {showFavorite && (
           <button
             onClick={handleFavorite}
-            className="absolute top-2 right-2 sm:top-3 sm:right-3 w-6 h-6 sm:w-8 sm:h-8 bg-black/20 hover:bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 z-10"
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 sm:w-10 sm:h-10 bg-black/30 hover:bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 z-10"
           >
             <Heart
-              className={`h-3 w-3 sm:h-4 sm:w-4 ${
+              className={`h-4 w-4 sm:h-5 sm:w-5 ${
                 isFavorite(track.id)
                   ? 'fill-red-500 text-red-500'
                   : 'text-white hover:text-red-400'
@@ -104,17 +104,17 @@ export function TrackCard({ track, showFavorite = true }: TrackCardProps) {
         )}
 
         {/* Duration Badge */}
-        <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 px-1.5 py-0.5 sm:px-2 sm:py-1 bg-black/60 backdrop-blur-sm rounded-md sm:rounded-lg text-white text-xs font-medium">
+        <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 px-2 py-1 sm:px-3 sm:py-1.5 bg-black/70 backdrop-blur-md rounded-lg sm:rounded-xl text-white text-xs sm:text-sm font-semibold">
           {formatDuration(track.duration)}
         </div>
       </div>
 
       {/* Track Info */}
-      <div className="p-3 sm:p-4">
-        <h3 className="font-semibold text-gray-900 dark:text-white line-clamp-2 mb-1 text-xs sm:text-sm leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+      <div className="p-4 sm:p-5">
+        <h3 className="font-bold text-gray-900 dark:text-white line-clamp-2 mb-2 text-sm sm:text-base leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
           {track.title}
         </h3>
-        <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">
+        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 line-clamp-1">
           {track.channel}
         </p>
       </div>

@@ -46,7 +46,7 @@ export function SearchBar({ onSearch, onCancel, isLoading = false, placeholder =
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={placeholder}
-          className="block w-full pl-14 pr-32 py-4 border-2 border-input rounded-2xl bg-background/80 backdrop-blur-md text-foreground placeholder-muted-foreground focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all duration-300 text-base shadow-modern hover:shadow-modern-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          className="block w-full pl-14 pr-32 py-4 border-2 border-input rounded-2xl bg-background/80 backdrop-blur-md text-foreground placeholder-muted-foreground focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all duration-300 text-base shadow-lg hover:shadow-lg-lg disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={isLoading}
         />
 
@@ -66,7 +66,7 @@ export function SearchBar({ onSearch, onCancel, isLoading = false, placeholder =
           type={isLoading ? "button" : "submit"}
           onClick={isLoading ? handleCancel : undefined}
           disabled={!query.trim() && !isLoading}
-          className="absolute inset-y-1.5 right-1.5 px-6 py-2.5 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-modern hover:shadow-modern-lg hover:scale-105 active:scale-95 flex items-center space-x-2"
+          className="absolute inset-y-1.5 right-1.5 px-6 py-2.5 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-lg-lg hover:scale-105 active:scale-95 flex items-center space-x-2"
         >
           {isLoading ? (
             <>

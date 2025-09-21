@@ -77,7 +77,7 @@ export default function ExplorePage() {
         <div className="text-center mb-20 sm:mb-24 animate-fade-in-up">
           <div className="flex items-center justify-center mb-8">
             <div className="relative group">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-primary-500 to-accent-500 rounded-3xl flex items-center justify-center shadow-modern-xl group-hover:shadow-blue-glow-lg transition-all duration-500 group-hover:scale-105">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-primary-500 to-accent-500 rounded-3xl flex items-center justify-center shadow-lg-xl group-hover:shadow-blue-glow-lg transition-all duration-500 group-hover:scale-105">
                 <Music className="h-10 w-10 sm:h-12 sm:w-12 text-white" />
               </div>
               <div className="absolute -inset-2 bg-gradient-to-br from-primary-500 to-accent-500 rounded-3xl blur opacity-30 group-hover:opacity-50 transition-opacity duration-500 -z-10"></div>
@@ -99,7 +99,7 @@ export default function ExplorePage() {
           <div className="flex items-center justify-center py-20 animate-fade-in-up">
             <div className="flex flex-col items-center space-y-6">
               <div className="relative">
-                <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center shadow-modern-xl">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center shadow-lg-xl">
                   <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
                 </div>
                 <div className="absolute -inset-2 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl blur opacity-30 animate-pulse-slow"></div>
@@ -120,7 +120,7 @@ export default function ExplorePage() {
                 {/* Section Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
                   <div className="flex items-center space-x-6">
-                    <div className={`w-16 h-16 bg-gradient-to-br ${section.gradient} rounded-2xl flex items-center justify-center shadow-modern-xl group-hover:shadow-blue-glow transition-all duration-300`}>
+                    <div className={`w-16 h-16 bg-gradient-to-br ${section.gradient} rounded-2xl flex items-center justify-center shadow-lg-xl group-hover:shadow-blue-glow transition-all duration-300`}>
                       <div className="text-white group-hover:scale-110 transition-transform duration-300">
                         {section.icon}
                       </div>
@@ -157,7 +157,7 @@ export default function ExplorePage() {
                 ) : (
                   <div className="text-center py-20">
                     <div className="relative mb-8">
-                      <div className={`w-24 h-24 bg-gradient-to-br ${section.gradient} bg-opacity-20 rounded-3xl flex items-center justify-center mx-auto shadow-modern`}>
+                      <div className={`w-24 h-24 bg-gradient-to-br ${section.gradient} bg-opacity-20 rounded-3xl flex items-center justify-center mx-auto shadow-lg`}>
                         <div className="text-primary-500">
                           {section.icon}
                         </div>

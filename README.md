@@ -113,18 +113,6 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 </tr>
 </table>
 
-## 📱 Screenshots
-
-<div align="center">
-
-### Desktop View
-![Desktop](https://via.placeholder.com/800x500/3b82f6/ffffff?text=Desktop+View)
-
-### Mobile View  
-![Mobile](https://via.placeholder.com/400x800/0ea5e9/ffffff?text=Mobile+View)
-
-</div>
-
 ## 🔧 Available Scripts
 
 ```bash

@@ -85,7 +85,7 @@ export function TrackCard({ track, showFavorite = true }: TrackCardProps) {
 
         {/* Play Button Overlay */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-500 flex items-center justify-center">
-          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/95 hover:bg-white rounded-full flex items-center justify-center shadow-modern-xl transform scale-0 group-hover:scale-100 transition-all duration-500 hover:scale-110 group-hover:shadow-blue-glow">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/95 hover:bg-white rounded-full flex items-center justify-center shadow-lg-xl transform scale-0 group-hover:scale-100 transition-all duration-500 hover:scale-110 group-hover:shadow-blue-glow">
             <Play className="h-5 w-5 sm:h-6 sm:w-6 text-primary-600 fill-current ml-0.5" />
           </div>
         </div>
@@ -107,7 +107,7 @@ export function TrackCard({ track, showFavorite = true }: TrackCardProps) {
         )}
 
         {/* Duration Badge */}
-        <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 px-2 py-1 sm:px-3 sm:py-1.5 bg-black/80 backdrop-blur-md rounded-lg text-white text-xs sm:text-sm font-semibold shadow-modern">
+        <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 px-2 py-1 sm:px-3 sm:py-1.5 bg-black/80 backdrop-blur-md rounded-lg text-white text-xs sm:text-sm font-semibold shadow-lg">
           {formatDuration(track.duration)}
         </div>
 

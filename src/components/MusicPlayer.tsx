@@ -62,13 +62,13 @@ export function MusicPlayer() {
   return (
     <>
       <audio ref={audioRef} preload="metadata" />
-      <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-xl border-t border-border/40 p-2 sm:p-4 z-50 shadow-modern-xl">
+      <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-xl border-t border-border/40 p-2 sm:p-4 z-50 shadow-lg-xl">
         <div className="container mx-auto">
           {/* Mobile Layout */}
           <div className="block sm:hidden">
             {/* Track Info */}
             <div className="flex items-center space-x-3 mb-3">
-              <div className="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-primary-100 to-accent-100 dark:from-primary-900/30 dark:to-accent-900/30 shadow-modern">
+              <div className="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-primary-100 to-accent-100 dark:from-primary-900/30 dark:to-accent-900/30 shadow-lg">
                 <Image
                   src={currentTrack.thumbnail}
                   alt={currentTrack.title}
@@ -93,7 +93,7 @@ export function MusicPlayer() {
               >
                 <List className="h-4 w-4" />
                 {queue.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center shadow-modern">
+                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center shadow-lg">
                     {queue.length}
                   </span>
                 )}
@@ -110,7 +110,7 @@ export function MusicPlayer() {
               </button>
               <button
                 onClick={togglePlayPause}
-                className="w-14 h-14 rounded-2xl bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 flex items-center justify-center shadow-modern-xl hover:shadow-blue-glow-lg transition-all duration-300 hover:scale-105 active:scale-95 group"
+                className="w-14 h-14 rounded-2xl bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 flex items-center justify-center shadow-lg-xl hover:shadow-blue-glow-lg transition-all duration-300 hover:scale-105 active:scale-95 group"
               >
                 {isPlaying ? (
                   <Pause className="h-6 w-6 text-white group-hover:scale-110 transition-transform" />
@@ -134,7 +134,7 @@ export function MusicPlayer() {
               <div className="flex-1 relative">
                 <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full transition-all duration-100 shadow-modern"
+                    className="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full transition-all duration-100 shadow-lg"
                     style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
                   />
                 </div>
@@ -167,7 +167,7 @@ export function MusicPlayer() {
               <div className="flex-1 relative">
                 <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full transition-all duration-100 shadow-modern"
+                    className="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full transition-all duration-100 shadow-lg"
                     style={{ width: `${volume * 100}%` }}
                   />
                 </div>
@@ -188,7 +188,7 @@ export function MusicPlayer() {
           <div className="hidden sm:flex items-center space-x-6">
             {/* Track Info */}
             <div className="flex items-center space-x-4 min-w-0 flex-1">
-              <div className="relative w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-primary-100 to-accent-100 dark:from-primary-900/30 dark:to-accent-900/30 shadow-modern group">
+              <div className="relative w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-primary-100 to-accent-100 dark:from-primary-900/30 dark:to-accent-900/30 shadow-lg group">
                 <Image
                   src={currentTrack.thumbnail}
                   alt={currentTrack.title}
@@ -219,7 +219,7 @@ export function MusicPlayer() {
                   onClick={toggleShuffle}
                   className={`p-2 rounded-xl transition-all duration-200 group ${
                     isShuffled 
-                      ? 'text-primary-500 bg-primary-100 dark:bg-primary-900/30 shadow-modern' 
+                      ? 'text-primary-500 bg-primary-100 dark:bg-primary-900/30 shadow-lg' 
                       : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                   }`}
                 >
@@ -233,7 +233,7 @@ export function MusicPlayer() {
                 </button>
                 <button
                   onClick={togglePlayPause}
-                  className="w-14 h-14 rounded-2xl bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 flex items-center justify-center shadow-modern-xl hover:shadow-blue-glow-lg transition-all duration-300 hover:scale-105 active:scale-95 group"
+                  className="w-14 h-14 rounded-2xl bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 flex items-center justify-center shadow-lg-xl hover:shadow-blue-glow-lg transition-all duration-300 hover:scale-105 active:scale-95 group"
                 >
                   {isPlaying ? (
                     <Pause className="h-6 w-6 text-white group-hover:scale-110 transition-transform" />
@@ -251,7 +251,7 @@ export function MusicPlayer() {
                   onClick={toggleRepeat}
                   className={`p-2 rounded-xl transition-all duration-200 group ${
                     isRepeating 
-                      ? 'text-primary-500 bg-primary-100 dark:bg-primary-900/30 shadow-modern' 
+                      ? 'text-primary-500 bg-primary-100 dark:bg-primary-900/30 shadow-lg' 
                       : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                   }`}
                 >
@@ -268,7 +268,7 @@ export function MusicPlayer() {
                 >
                   <List className="h-4 w-4 group-hover:scale-110 transition-transform" />
                   {queue.length > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center shadow-modern">
+                    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center shadow-lg">
                       {queue.length}
                     </span>
                   )}
@@ -283,7 +283,7 @@ export function MusicPlayer() {
                 <div className="flex-1 relative">
                   <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
                     <div 
-                      className="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full transition-all duration-100 shadow-modern"
+                      className="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full transition-all duration-100 shadow-lg"
                       style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
                     />
                   </div>
@@ -317,7 +317,7 @@ export function MusicPlayer() {
               <div className="w-28 relative">
                 <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full transition-all duration-100 shadow-modern"
+                    className="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full transition-all duration-100 shadow-lg"
                     style={{ width: `${volume * 100}%` }}
                   />
                 </div>

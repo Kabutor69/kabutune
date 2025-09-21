@@ -43,7 +43,7 @@ export function FavoritesContent() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-8">
             <div className="flex items-center space-x-6">
               <div className="relative group">
-                <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center shadow-modern-xl group-hover:shadow-blue-glow-lg transition-all duration-500 group-hover:scale-105">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center shadow-lg-xl group-hover:shadow-blue-glow-lg transition-all duration-500 group-hover:scale-105">
                   <Heart className="h-8 w-8 text-white fill-current" />
                 </div>
                 <div className="absolute -inset-2 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition-opacity duration-500 -z-10"></div>
@@ -87,7 +87,7 @@ export function FavoritesContent() {
         ) : (
           <div className="text-center py-20 animate-fade-in-up">
             <div className="relative mb-8">
-              <div className="w-24 h-24 bg-gradient-to-br from-primary-100 to-accent-100 dark:from-primary-900/50 dark:to-accent-900/50 rounded-3xl flex items-center justify-center mx-auto shadow-modern">
+              <div className="w-24 h-24 bg-gradient-to-br from-primary-100 to-accent-100 dark:from-primary-900/50 dark:to-accent-900/50 rounded-3xl flex items-center justify-center mx-auto shadow-lg">
                 <Heart className="h-12 w-12 text-primary-500 fill-current" />
               </div>
               <div className="absolute -inset-2 bg-gradient-to-br from-primary-500 to-accent-500 rounded-3xl blur opacity-20 animate-pulse-slow"></div>

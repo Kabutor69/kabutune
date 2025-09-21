@@ -109,7 +109,7 @@ export default function RootLayout({
                 {/* Loading Overlay */}
                 <div id="loading-overlay" className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
                   <div className="flex flex-col items-center space-y-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center shadow-modern-xl">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center shadow-lg-xl">
                       <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                     </div>
                     <span className="text-sm text-muted-foreground font-medium">Loading...</span>

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { SearchBar } from '@/components/SearchBar';
 import { TrackCard } from '@/components/TrackCard';
 import { Track, SearchResponse, ApiError } from '@/types';
-import { Loader2, Music } from 'lucide-react';
+import { Loader2, Music, Search, Heart, X } from 'lucide-react';
 import { useMusicPlayer } from '@/contexts/MusicPlayerContext';
 
 // Force dynamic rendering
@@ -80,7 +80,7 @@ export default function Home() {
           {/* Logo and Branding */}
           <div className="flex items-center justify-center mb-8">
             <div className="relative group">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-primary-500 to-accent-500 rounded-3xl flex items-center justify-center shadow-modern-xl group-hover:shadow-blue-glow-lg transition-all duration-500 group-hover:scale-105">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-primary-500 to-accent-500 rounded-3xl flex items-center justify-center shadow-lg-xl group-hover:shadow-blue-glow-lg transition-all duration-500 group-hover:scale-105">
                 <Music className="h-10 w-10 sm:h-12 sm:w-12 text-white" />
               </div>
               <div className="absolute -inset-2 bg-gradient-to-br from-primary-500 to-accent-500 rounded-3xl blur opacity-30 group-hover:opacity-50 transition-opacity duration-500 -z-10"></div>
@@ -148,7 +148,7 @@ export default function Home() {
           <div className="flex items-center justify-center py-20 animate-fade-in-up">
             <div className="flex flex-col items-center space-y-6">
               <div className="relative">
-                <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center shadow-modern-xl">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center shadow-lg-xl">
                   <Loader2 className="h-8 w-8 animate-spin text-white" />
                 </div>
                 <div className="absolute -inset-2 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl blur opacity-30 animate-pulse-slow"></div>
@@ -206,7 +206,7 @@ export default function Home() {
         {hasSearched && tracks.length === 0 && !isLoading && !error && (
           <div className="text-center py-20 animate-fade-in-up">
             <div className="relative mb-8">
-              <div className="w-24 h-24 bg-gradient-to-br from-muted to-muted/50 rounded-3xl flex items-center justify-center mx-auto shadow-modern">
+              <div className="w-24 h-24 bg-gradient-to-br from-muted to-muted/50 rounded-3xl flex items-center justify-center mx-auto shadow-lg">
                 <Music className="h-12 w-12 text-muted-foreground" />
               </div>
               <div className="absolute -inset-2 bg-gradient-to-br from-muted to-muted/50 rounded-3xl blur opacity-30"></div>
@@ -230,7 +230,7 @@ export default function Home() {
         {!hasSearched && (
           <div className="text-center py-20 animate-fade-in-up">
             <div className="relative mb-8">
-              <div className="w-24 h-24 bg-gradient-to-br from-primary-100 to-accent-100 dark:from-primary-900/50 dark:to-accent-900/50 rounded-3xl flex items-center justify-center mx-auto shadow-modern">
+              <div className="w-24 h-24 bg-gradient-to-br from-primary-100 to-accent-100 dark:from-primary-900/50 dark:to-accent-900/50 rounded-3xl flex items-center justify-center mx-auto shadow-lg">
                 <Music className="h-12 w-12 text-primary-500" />
               </div>
               <div className="absolute -inset-2 bg-gradient-to-br from-primary-500 to-accent-500 rounded-3xl blur opacity-20 animate-pulse-slow"></div>
@@ -242,9 +242,9 @@ export default function Home() {
               Start by searching for your favorite songs, artists, or albums.
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
-              <span className="px-3 py-1 bg-secondary/50 rounded-full">Try "Ed Sheeran"</span>
-              <span className="px-3 py-1 bg-secondary/50 rounded-full">Try "Shape of You"</span>
-              <span className="px-3 py-1 bg-secondary/50 rounded-full">Try "Pop Music"</span>
+              <span className="px-3 py-1 bg-secondary/50 rounded-full">Try &quot;Ed Sheeran&quot;</span>
+              <span className="px-3 py-1 bg-secondary/50 rounded-full">Try &quot;Shape of You&quot;</span>
+              <span className="px-3 py-1 bg-secondary/50 rounded-full">Try &quot;Pop Music&quot;</span>
             </div>
           </div>
         )}

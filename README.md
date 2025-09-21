@@ -1,181 +1,152 @@
+<div align="center">
+
 # 🎵 KabuTune
 
-A modern, responsive music streaming application built with Next.js that allows you to discover and stream music from YouTube with a beautiful, professional interface.
+**Modern Music Streaming • Beautiful Interface • Professional Design**
 
-![KabuTune](https://img.shields.io/badge/Next.js-15.5.3-black?style=for-the-badge&logo=next.js)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.0-38B2AC?style=for-the-badge&logo=tailwind-css)
+[![Next.js](https://img.shields.io/badge/Next.js-15.5.3-000000?style=flat&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-06B6D4?style=flat&logo=tailwindcss)](https://tailwindcss.com/)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat)](LICENSE)
+
+*Discover and stream music from YouTube with a beautiful, modern interface*
+
+[🚀 Live Demo](https://kabutune.app) • [📖 Documentation](#-features) • [🐛 Report Bug](https://github.com/kabutor69/kabutune/issues)
+
+</div>
 
 ## ✨ Features
 
-- 🎵 **Music Streaming**: Stream music directly from YouTube
-- 🔍 **Smart Search**: Search for songs, artists, and albums
-- ❤️ **Favorites**: Save your favorite tracks
-- 📱 **Responsive Design**: Works perfectly on all devices (mobile, tablet, desktop)
-- 🌙 **Dark/Light Mode**: Automatic system preference detection
-- 🎶 **Auto Queue**: Intelligent queue generation for continuous playback
-- 🎛️ **Music Controls**: Play, pause, skip, shuffle, repeat
-- 📊 **Queue Management**: View and manage your music queue
-- 🎨 **Modern UI**: Beautiful glassmorphism design with blue gradients
+<table>
+<tr>
+<td width="50%">
 
-## 🚀 Getting Started
+### 🎵 **Core Features**
+- **Smart Search** - Find any song, artist, or album
+- **High-Quality Streaming** - Direct YouTube audio streaming
+- **Favorites System** - Save your favorite tracks
+- **Queue Management** - Intelligent auto-queue generation
+
+</td>
+<td width="50%">
+
+### 🎨 **Design & UX**
+- **Modern Blue Theme** - Professional gradient design
+- **Fully Responsive** - Perfect on all devices
+- **Dark/Light Mode** - Automatic theme detection
+- **Smooth Animations** - Fluid transitions & hover effects
+
+</td>
+</tr>
+</table>
+
+### 🎛️ **Music Controls**
+- Play, Pause, Skip (Previous/Next)
+- Shuffle & Repeat modes
+- Volume control with visual feedback
+- Progress bar with seek functionality
+- Queue visualization and management
+
+## 🚀 Quick Start
 
 ### Prerequisites
-
-- Node.js 18+ 
-- npm or yarn
-- YouTube Data API v3 key
+- **Node.js** 18+ 
+- **YouTube Data API v3** key
 
 ### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/kabutor69/kabutune.git
-   cd kabutune
-   ```
+```bash
+# 1. Clone the repository
+git clone https://github.com/kabutor69/kabutune.git
+cd kabutune
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
+# 2. Install dependencies
+npm install
 
-3. **Set up environment variables**
-   Create a `.env.local` file in the root directory:
-   ```env
-   YT_API_KEY=AIzaSyBxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-   ```
-   
-   **Example:**
-   ```env
-   YT_API_KEY=AIzaSyBxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-   ```
+# 3. Set up environment variables
+echo "YT_API_KEY=your_youtube_api_key_here" > .env.local
 
-4. **Get YouTube API Key**
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Create a new project or select existing one
-   - Enable YouTube Data API v3
-   - Create credentials (API Key)
-   - Copy the API key to your `.env.local` file
-   
-   **Note:** Replace `AIzaSyBxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx` with your actual API key
+# 4. Run the development server
+npm run dev
+```
 
-5. **Run the development server**
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
+### 🔑 Get YouTube API Key
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing one
+3. Enable **YouTube Data API v3**
+4. Create credentials (API Key)
+5. Copy the API key to your `.env.local` file
 
-6. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
+### 🌐 Open in Browser
+Navigate to [http://localhost:3000](http://localhost:3000)
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 15.5.3 with App Router
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Audio Streaming**: @distube/ytdl-core
-- **API**: YouTube Data API v3
-- **Icons**: Lucide React
-- **State Management**: React Context API
+<table>
+<tr>
+<td width="33%">
 
-## 📱 Responsive Design
+**Frontend**
+- Next.js 15.5.3
+- TypeScript
+- Tailwind CSS 4.0
+- React 19
 
-KabuTune is fully responsive and optimized for all devices:
+</td>
+<td width="33%">
 
-- **Mobile**: Compact layout with touch-friendly controls
-- **Tablet**: Balanced layout with medium-sized elements
-- **Desktop**: Full-featured layout with all controls visible
+**Audio & API**
+- @distube/ytdl-core
+- YouTube Data API v3
+- Lucide React Icons
 
-## 🎨 Design Features
+</td>
+<td width="33%">
 
-- **Glassmorphism**: Modern frosted glass effects
-- **Blue Gradient Theme**: Professional blue-to-indigo color scheme
-- **Smooth Animations**: Fluid transitions and hover effects
-- **System Theme**: Automatic dark/light mode based on system preference
-- **Professional UI**: Clean, modern interface inspired by music streaming apps
+**Features**
+- PWA Ready
+- Dark Mode
+- Responsive Design
+- Context API
+
+</td>
+</tr>
+</table>
+
+## 📱 Screenshots
+
+<div align="center">
+
+### Desktop View
+![Desktop](https://via.placeholder.com/800x500/3b82f6/ffffff?text=Desktop+View)
+
+### Mobile View  
+![Mobile](https://via.placeholder.com/400x800/0ea5e9/ffffff?text=Mobile+View)
+
+</div>
 
 ## 🔧 Available Scripts
 
 ```bash
-# Development
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-
-# Type checking
-npm run type-check   # Run TypeScript compiler
+npm run dev     # Start development server
+npm run build   # Build for production  
+npm run start   # Start production server
+npm run lint    # Run ESLint
 ```
-
-## 📁 Project Structure
-
-```
-kabutune/
-├── src/
-│   ├── app/                 # Next.js App Router pages
-│   │   ├── api/            # API routes
-│   │   ├── explore/        # Explore page
-│   │   ├── favorites/      # Favorites page
-│   │   └── page.tsx        # Home page
-│   ├── components/         # React components
-│   │   ├── Header.tsx      # Navigation header
-│   │   ├── MusicPlayer.tsx # Music player component
-│   │   ├── SearchBar.tsx   # Search input component
-│   │   ├── TrackCard.tsx   # Track display component
-│   │   └── QueueList.tsx   # Queue management component
-│   ├── contexts/           # React Context providers
-│   │   ├── MusicPlayerContext.tsx
-│   │   ├── FavoritesContext.tsx
-│   │   └── ThemeContext.tsx
-│   └── types/              # TypeScript type definitions
-├── public/                 # Static assets
-├── next.config.ts          # Next.js configuration
-├── tailwind.config.ts      # Tailwind CSS configuration
-└── package.json            # Dependencies and scripts
-```
-
-## 🎵 How It Works
-
-1. **Search**: Users can search for music using the search bar
-2. **Stream**: Music is streamed directly from YouTube using ytdl-core
-3. **Queue**: Intelligent queue system automatically generates related tracks
-4. **Favorites**: Users can save tracks to their favorites collection
-5. **Controls**: Full music player controls with play, pause, skip, shuffle, repeat
-
-## 🔒 Privacy & Security
-
-- No user data is stored on external servers
-- Favorites are stored locally in browser
-- YouTube API is used only for search and metadata
-- Audio streaming is handled client-side
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+We welcome contributions! Here's how you can help:
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+4. **Push** to the branch (`git push origin feature/amazing-feature`)
+5. **Open** a Pull Request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- YouTube for providing the Data API
-- Next.js team for the amazing framework
-- Tailwind CSS for the utility-first CSS framework
-- Lucide for the beautiful icons
-
-## 📞 Support
-
-If you have any questions or need help, please open an issue on GitHub.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 ---
 
@@ -184,5 +155,7 @@ If you have any questions or need help, please open an issue on GitHub.
 **Made with ❤️ by [Kabutor](https://github.com/kabutor69)**
 
 [⭐ Star this repo](https://github.com/kabutor69/kabutune) • [🐛 Report Bug](https://github.com/kabutor69/kabutune/issues) • [💡 Request Feature](https://github.com/kabutor69/kabutune/issues)
+
+*If you like this project, please give it a star! ⭐*
 
 </div>

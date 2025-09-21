@@ -1,102 +1,40 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Music, Heart, Compass, Search, Menu, X } from 'lucide-react';
+import { Home, Heart } from 'lucide-react';
 
 export function Header() {
   const pathname = usePathname();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  const linkClasses = (path: string) =>
+    `flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+      pathname === path
+        ? "bg-cyan-500 text-black"
+        : "text-cyan-300 hover:text-cyan-200 hover:bg-gray-800"
+    }`;
 
-  const navigation = [
-    { name: 'Search', href: '/', icon: Search },
-    { name: 'Explore', href: '/explore', icon: Compass },
-    { name: 'Favorites', href: '/favorites', icon: Heart },
-  ];
+  const iconClass = "w-4 h-4";
 
   return (
-    <header className="sticky top-0 z-50 bg-bg/95 backdrop-blur border-b border-border">
-      <div className="container">
-        <div className="flex h-16 items-center justify-between">
-          
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-              <Music className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <div className="text-lg font-bold text-text">KabuTune</div>
-              <div className="text-xs text-text-muted hidden sm:block">Music Streaming</div>
-            </div>
+    <nav className="w-full sticky top-0 z-[70] border-b border-gray-800/80 bg-black/70 backdrop-blur-md">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2">
+          <span className="text-lg font-bold gradient-text">KabuTune</span>
+        </Link>
+
+        <div className="flex items-center gap-2">
+          <Link href="/" className={linkClasses("/")}>
+            <Home className={iconClass} />
+            <span className="hidden sm:inline">Home</span>
           </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-1">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              const isActive = pathname === item.href;
-              
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isActive
-                      ? 'bg-accent text-white'
-                      : 'text-text-muted hover:text-text hover:bg-surface'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <Icon className="h-4 w-4" />
-                    <span>{item.name}</span>
-                  </div>
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-text-muted hover:text-text hover:bg-surface"
-          >
-            {isMobileMenuOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
-          </button>
+          <Link href="/favorites" className={linkClasses("/favorites")}>
+            <Heart className={iconClass} />
+            <span className="hidden sm:inline">Favorites</span>
+          </Link>
         </div>
-
-        {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-border">
-            <nav className="flex flex-col py-4">
-              {navigation.map((item) => {
-                const Icon = item.icon;
-                const isActive = pathname === item.href;
-                
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors ${
-                      isActive
-                        ? 'bg-accent text-white'
-                        : 'text-text-muted hover:text-text hover:bg-surface'
-                    }`}
-                  >
-                    <Icon className="h-5 w-5" />
-                    <span>{item.name}</span>
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-        )}
       </div>
-    </header>
+    </nav>
   );
 }

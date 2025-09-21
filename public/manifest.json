@@ -1,11 +1,11 @@
 {
-  "name": "KabuTune - Modern Music Streaming",
+  "name": "KabuTune - Free Music Streaming",
   "short_name": "KabuTune",
-  "description": "Discover and stream music from YouTube with a beautiful, modern interface",
+  "description": "Stream millions of songs for free. Discover trending music, search your favorites, and enjoy unlimited streaming with KabuTune.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#3b82f6",
+  "background_color": "#000000",
+  "theme_color": "#06b6d4",
   "orientation": "portrait-primary",
   "categories": ["music", "entertainment"],
   "lang": "en",
@@ -24,38 +24,12 @@
       "purpose": "any maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "/screenshot-desktop.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide"
-    },
-    {
-      "src": "/screenshot-mobile.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow"
-    }
-  ],
   "shortcuts": [
     {
       "name": "Search Music",
       "short_name": "Search",
       "description": "Search for music tracks",
       "url": "/",
-      "icons": [
-        {
-          "src": "/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "Explore",
-      "short_name": "Explore",
-      "description": "Discover trending music",
-      "url": "/explore",
       "icons": [
         {
           "src": "/icon-192.png",

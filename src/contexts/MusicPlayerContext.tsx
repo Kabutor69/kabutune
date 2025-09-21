@@ -4,7 +4,7 @@ import React, { createContext, useContext, useReducer, useEffect, useRef, useCal
 import { Track, PlayerState } from '@/types';
 
 type PlayerAction =
-  | { type: 'SET_CURRENT_TRACK'; payload: Track }
+  | { type: 'SET_CURRENT_TRACK'; payload: Track | null }
   | { type: 'SET_CURRENT_INDEX'; payload: number }
   | { type: 'TOGGLE_PLAY_PAUSE' }
   | { type: 'SET_PLAYING'; payload: boolean }
@@ -31,6 +31,8 @@ interface MusicPlayerContextType {
   addToQueue: (tracks: Track[]) => void;
   playAll: (tracks: Track[]) => void;
   clearQueue: () => void;
+  removeFromQueue: (trackId: string) => void;
+  shuffleQueue: () => void;
   toggleShuffle: () => void;
   toggleRepeat: () => void;
   audioRef: React.RefObject<HTMLAudioElement | null>;
@@ -440,6 +442,31 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     dispatch({ type: 'TOGGLE_REPEAT' });
   };
 
+  const removeFromQueue = (trackId: string) => {
+    const newQueue = state.queue.filter(track => track.id !== trackId);
+    dispatch({ type: 'SET_QUEUE', payload: newQueue });
+    
+    // If we removed the current track, move to next or stop
+    if (state.currentTrack?.id === trackId) {
+      if (newQueue.length > 0) {
+        const newIndex = Math.min(state.currentIndex, newQueue.length - 1);
+        dispatch({ type: 'SET_CURRENT_INDEX', payload: newIndex });
+      } else {
+        dispatch({ type: 'SET_CURRENT_TRACK', payload: null });
+        dispatch({ type: 'SET_PLAYING', payload: false });
+      }
+    }
+  };
+
+  const shuffleQueue = () => {
+    const shuffledQueue = [...state.queue];
+    for (let i = shuffledQueue.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledQueue[i], shuffledQueue[j]] = [shuffledQueue[j], shuffledQueue[i]];
+    }
+    dispatch({ type: 'SET_QUEUE', payload: shuffledQueue });
+  };
+
   return (
     <MusicPlayerContext.Provider
       value={{
@@ -453,6 +480,8 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
         addToQueue,
         playAll,
         clearQueue,
+        removeFromQueue,
+        shuffleQueue,
         toggleShuffle,
         toggleRepeat,
         audioRef,

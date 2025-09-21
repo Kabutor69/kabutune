@@ -9,16 +9,6 @@ const config: Config = {
   darkMode: 'class',
   theme: {
     extend: {
-      colors: {
-        bg: 'var(--bg)',
-        text: 'var(--text)',
-        'text-muted': 'var(--text-muted)',
-        border: 'var(--border)',
-        accent: 'var(--accent)',
-        'accent-hover': 'var(--accent-hover)',
-        surface: 'var(--surface)',
-        'surface-hover': 'var(--surface-hover)',
-      },
       fontFamily: {
         sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
       },

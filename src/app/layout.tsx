@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/contexts/ThemeContext";
 import { MusicPlayerProvider } from "@/contexts/MusicPlayerContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { Header } from "@/components/Header";
@@ -75,36 +74,34 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#3b82f6" />
-        <meta name="color-scheme" content="light dark" />
+        <meta name="theme-color" content="#06b6d4" />
+        <meta name="color-scheme" content="dark" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ErrorBoundary>
-          <ThemeProvider>
-            <MusicPlayerProvider>
-              <FavoritesProvider>
-                <div className="min-h-screen flex flex-col">
-                  {/* Header */}
-                  <Header />
-                  
-                  {/* Main Content */}
-                  <main className="flex-1">
-                    {children}
-                  </main>
-                  
-                  {/* Music Player */}
-                  <MusicPlayer />
-                </div>
-              </FavoritesProvider>
-            </MusicPlayerProvider>
-          </ThemeProvider>
+          <MusicPlayerProvider>
+            <FavoritesProvider>
+              <div className="min-h-screen bg-black text-cyan-300">
+                {/* Header */}
+                <Header />
+                
+                {/* Main Content */}
+                <main className="pb-32">
+                  {children}
+                </main>
+                
+                {/* Music Player */}
+                <MusicPlayer />
+              </div>
+            </FavoritesProvider>
+          </MusicPlayerProvider>
         </ErrorBoundary>
       </body>
     </html>

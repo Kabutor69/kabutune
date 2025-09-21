@@ -1,118 +1,140 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
-import { Play, Heart } from 'lucide-react';
+import { Play, MoreHorizontal, Heart, Clock, Music } from 'lucide-react';
 import { Track } from '@/types';
-import { useMusicPlayer } from '@/contexts/MusicPlayerContext';
-import { useFavorites } from '@/contexts/FavoritesContext';
 
-interface TrackCardProps {
+type TrackCardProps = {
   track: Track;
-  showFavorite?: boolean;
-}
-
-const formatDuration = (duration: string): string => {
-  if (!duration || duration === '0:00' || duration === '0') return '--:--';
-  
-  if (duration.includes(':')) {
-    const parts = duration.split(':');
-    if (parts.length === 3) {
-      const hours = parseInt(parts[0]);
-      const minutes = parseInt(parts[1]);
-      const seconds = parseInt(parts[2]);
-      if (hours > 0) {
-        return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-      } else {
-        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-      }
-    } else if (parts.length === 2) {
-      return duration;
-    }
-  }
-  
-  const totalSeconds = parseInt(duration);
-  if (!isNaN(totalSeconds) && totalSeconds > 0) {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    
-    if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    } else {
-      return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-    }
-  }
-  
-  return duration;
+  isActive?: boolean;
+  isPlaying?: boolean;
+  indexBadge?: string | number;
+  onPlay: () => void;
+  onAddToQueue?: () => void;
+  isFavorite: boolean;
+  onToggleFavorite: () => void;
 };
 
-export function TrackCard({ track, showFavorite = true }: TrackCardProps) {
-  const { playTrack } = useMusicPlayer();
-  const { isFavorite, toggleFavorite } = useFavorites();
+const formatTime = (seconds?: number) => {
+  if (!seconds || seconds < 1) return "";
+  const hours = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
+  
+  if (hours > 0) {
+    return `${hours}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
 
-  const handlePlay = () => {
-    playTrack(track);
-  };
+const formatViews = (views?: number) => {
+  if (!views) return "";
+  if (views >= 1000000) return `${(views / 1000000).toFixed(1)}M views`;
+  if (views >= 1000) return `${(views / 1000).toFixed(1)}K views`;
+  return `${views} views`;
+};
 
-  const handleFavorite = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    try {
-      toggleFavorite(track);
-    } catch (error) {
-      console.error('Error toggling favorite:', error);
-    }
-  };
-
+export function TrackCard({
+  track,
+  isActive = false,
+  isPlaying = false,
+  indexBadge,
+  onPlay,
+  onAddToQueue,
+  isFavorite,
+  onToggleFavorite,
+}: TrackCardProps) {
   return (
-    <div className="card cursor-pointer group" onClick={handlePlay}>
-      <div className="relative aspect-square bg-surface">
-        <Image
+    <div
+      className="group bg-gray-900/60 border border-gray-800 rounded-2xl p-3 hover:bg-gray-900 hover:border-gray-700 transition-colors h-full flex flex-col hover-lift"
+      role="article"
+      aria-label={`${track.title} by ${track.channel}`}
+    >
+      <div className="relative mb-3">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={track.thumbnail}
           alt={track.title}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-200"
-          unoptimized
-          sizes="(max-width: 480px) 50vw, (max-width: 768px) 33vw, (max-width: 1200px) 25vw, 20vw"
+          className="w-full aspect-square rounded-xl object-cover"
         />
-
-        {/* Play Button Overlay */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 flex items-center justify-center">
-          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg transform scale-0 group-hover:scale-100 transition-transform duration-200">
-            <Play className="h-5 w-5 text-accent fill-current ml-0.5" />
-          </div>
-        </div>
-
-        {/* Favorite Button */}
-        {showFavorite && (
+        <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center bg-black/35">
           <button
-            onClick={handleFavorite}
-            className="absolute top-2 right-2 w-8 h-8 bg-black/40 hover:bg-black/60 rounded-full flex items-center justify-center transition-colors duration-200 z-10"
+            onClick={onPlay}
+            className="bg-cyan-500 hover:bg-cyan-400 text-black p-3 rounded-full shadow-lg"
+            aria-label="Play"
+            title="Play"
           >
-            <Heart
-              className={`h-4 w-4 transition-colors duration-200 ${
-                isFavorite(track.id)
-                  ? 'fill-red-500 text-red-500'
-                  : 'text-white hover:text-red-400'
-              }`}
-            />
+            <Play className="w-5 h-5 ml-0.5" />
           </button>
-        )}
-
-        {/* Duration Badge */}
-        <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/80 rounded text-white text-xs font-medium">
-          {formatDuration(track.duration)}
         </div>
+        {typeof indexBadge !== "undefined" && (
+          <div className="absolute top-2 right-2 bg-black/70 border border-gray-700 rounded-md px-1.5 py-0.5 text-[10px] font-semibold">
+            {indexBadge}
+          </div>
+        )}
+        {isActive && (
+          <div className="absolute top-2 left-2 bg-cyan-500 text-black rounded-md px-1.5 py-0.5 text-[10px] font-semibold flex items-center gap-1">
+            {isPlaying ? (
+              <>
+                <div className="w-1.5 h-1.5 bg-black rounded-full animate-pulse"></div>
+                Playing
+              </>
+            ) : (
+              <>
+                <Music className="w-3 h-3" />
+                Paused
+              </>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Track Info */}
-      <div className="p-3 space-y-1">
-        <h3 className="font-medium text-text text-sm leading-tight line-clamp-2">
+      <div className="flex-1 flex flex-col">
+        <h3 className="text-sm font-semibold text-cyan-200 line-clamp-2 mb-0.5" title={track.title}>
           {track.title}
         </h3>
-        <p className="text-xs text-text-muted line-clamp-1">
+        <p className="text-xs text-gray-400 truncate mb-2" title={track.channel}>
           {track.channel}
         </p>
+
+        <div className="flex items-center text-gray-500 text-[10px] mt-auto pt-2 border-t border-gray-800">
+          {track.duration ? (
+            <span className="flex items-center mr-3">
+              <Clock className="w-3 h-3 mr-1" />
+              {formatTime(parseInt(track.duration))}
+            </span>
+          ) : null}
+          {track.views ? (
+            <span className="flex items-center">
+              {formatViews(track.views)}
+            </span>
+          ) : null}
+        </div>
+
+        <div className="flex items-center justify-between mt-3">
+          <button
+            onClick={onToggleFavorite}
+            className={`p-1 rounded-full transition-colors ${
+              isFavorite
+                ? "text-red-500 hover:bg-red-500/20"
+                : "text-gray-500 hover:text-cyan-400 hover:bg-gray-800"
+            }`}
+            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+            title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          >
+            <Heart className={`w-4 h-4 fill-current ${isFavorite ? 'fill-red-500' : 'fill-transparent'}`} />
+          </button>
+          {onAddToQueue && (
+            <button
+              onClick={onAddToQueue}
+              className="text-gray-500 hover:text-cyan-400 hover:bg-gray-800 p-1.5 rounded-full transition-colors"
+              aria-label="Add to queue"
+              title="Add to queue"
+            >
+              <MoreHorizontal className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

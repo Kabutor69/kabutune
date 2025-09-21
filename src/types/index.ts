@@ -5,6 +5,7 @@ export interface Track {
   thumbnail: string;
   duration: string;
   url: string;
+  views?: number;
   isFavorite?: boolean;
 }
 

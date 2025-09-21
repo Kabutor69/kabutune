@@ -1,60 +1,114 @@
 'use client';
 
-import React, { useState } from 'react';
-import { SearchBar } from '@/components/SearchBar';
+import React, { useState, useEffect, useRef } from 'react';
 import { TrackCard } from '@/components/TrackCard';
 import { Track, SearchResponse, ApiError } from '@/types';
-import { Music, Search, Heart } from 'lucide-react';
 import { useMusicPlayer } from '@/contexts/MusicPlayerContext';
+import { useFavorites } from '@/contexts/FavoritesContext';
+import { 
+  Search as SearchIcon, 
+  Music,
+  AlertCircle,
+  X
+} from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 export default function Home() {
-  const { state } = useMusicPlayer();
+  const { playTrack } = useMusicPlayer();
+  const { isFavorite, toggleFavorite } = useFavorites();
+  
   const [tracks, setTracks] = useState<Track[]>([]);
+  const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [nextPageToken, setNextPageToken] = useState<string | null>(null);
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
-  const [currentQuery, setCurrentQuery] = useState<string>('');
+  const [nextPageToken, setNextPageToken] = useState<string | null>(null);
+  
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSearch = async (query: string) => {
+  // Load search history from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('searchHistory');
+    if (saved) {
+      try {
+        setSearchHistory(JSON.parse(saved));
+      } catch {
+        setSearchHistory([]);
+      }
+    }
+  }, []);
+
+  const saveToSearchHistory = (searchQuery: string) => {
+    if (!searchQuery.trim()) return;
+    
+    const newHistory = [searchQuery, ...searchHistory.filter(h => h !== searchQuery)].slice(0, 10);
+    setSearchHistory(newHistory);
+    localStorage.setItem('searchHistory', JSON.stringify(newHistory));
+  };
+
+  const handleSearch = async (searchQuery?: string) => {
+    const searchTerm = searchQuery || query.trim();
+    if (!searchTerm) return;
+
     setIsLoading(true);
     setError(null);
     setTracks([]);
     setNextPageToken(null);
     setHasSearched(true);
-    setCurrentQuery(query);
+    saveToSearchHistory(searchTerm);
 
     try {
-      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-      const data: SearchResponse | ApiError = await response.json();
-
-      if (!response.ok) {
-        throw new Error((data as ApiError).error || 'Search failed');
+      const res = await fetch(`/api/search?q=${encodeURIComponent(searchTerm)}&limit=30&t=${Date.now()}`);
+      const data = await res.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
       }
-
-      const searchData = data as SearchResponse;
-      setTracks(searchData.tracks);
-      setNextPageToken(searchData.nextPageToken || null);
+      
+      setTracks(data.tracks || []);
+      setNextPageToken(data.nextPageToken || null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error("Search failed:", err);
+      setError(err instanceof Error ? err.message : 'Search failed');
+      setTracks([]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleCancel = () => {
-    setIsLoading(false);
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  const handleHistoryClick = (historyQuery: string) => {
+    setQuery(historyQuery);
+    handleSearch(historyQuery);
+  };
+
+  const clearSearch = () => {
+    setQuery("");
+    setTracks([]);
+    setHasSearched(false);
     setError(null);
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  };
+
+  const handlePlay = (track: Track) => {
+    playTrack(track);
   };
 
   const loadMore = async () => {
-    if (!nextPageToken || isLoading || !currentQuery) return;
+    if (!nextPageToken || isLoading || !query) return;
 
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/search?q=${encodeURIComponent(currentQuery)}&pageToken=${nextPageToken}`);
+      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&pageToken=${nextPageToken}`);
       const data: SearchResponse | ApiError = await response.json();
 
       if (!response.ok) {
@@ -72,143 +126,146 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-bg" style={{ paddingBottom: state.currentTrack ? '80px' : '0' }}>
-      <div className="container py-8 sm:py-12 sm:py-16">
+    <div className="container mx-auto px-4 py-8">
+      {/* Header */}
+      <div className="px-0 sm:px-0 mb-8">
+        <div className="flex items-center gap-3">
+          <div className="bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-md p-2">
+            <SearchIcon className="w-5 h-5" />
+          </div>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold gradient-text">Search Music</h1>
+            <p className="text-gray-400 text-xs sm:text-sm">Find your favorite songs and artists</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Search Bar */}
+      <div className="max-w-2xl mx-auto mb-8">
+        <div className="relative">
+          <SearchIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <input
+            ref={searchInputRef}
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Search for songs, artists, or albums..."
+            className="w-full bg-gray-900/60 border border-gray-800 rounded-xl pl-12 pr-12 py-4 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
+          />
+          {query && (
+            <button
+              onClick={clearSearch}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
+        </div>
         
-        {/* Header */}
-        <div className="text-center mb-12 sm:mb-16 sm:mb-20">
-          <div className="flex items-center justify-center mb-6">
-            <div className="w-12 h-12 bg-accent rounded-lg flex items-center justify-center">
-              <Music className="h-6 w-6 text-white" />
+        <button
+          onClick={() => handleSearch()}
+          disabled={isLoading || !query.trim()}
+          className="w-full mt-4 bg-cyan-500 hover:bg-cyan-400 disabled:bg-gray-600 disabled:cursor-not-allowed text-black font-semibold py-3 rounded-xl transition-colors"
+        >
+          {isLoading ? (
+            <div className="flex items-center justify-center gap-2">
+              <div className="animate-spin w-5 h-5 border-2 border-black border-t-transparent rounded-full"></div>
+              Searching...
             </div>
-          </div>
-          
-          <h1 className="text-4xl sm:text-5xl sm:text-6xl font-bold text-text mb-4">
-            KabuTune
-          </h1>
-          
-          <p className="text-lg sm:text-xl text-text-muted mb-8 max-w-2xl mx-auto">
-            Discover and stream music from YouTube with a clean, simple interface.
-          </p>
+          ) : (
+            'Search'
+          )}
+        </button>
+      </div>
 
-          <div className="max-w-lg mx-auto">
-            <SearchBar onSearch={handleSearch} onCancel={handleCancel} isLoading={isLoading} />
+      {/* Search History */}
+      {searchHistory.length > 0 && !hasSearched && (
+        <div className="max-w-2xl mx-auto mb-8">
+          <h3 className="text-lg font-semibold mb-4 text-gray-300">Recent Searches</h3>
+          <div className="flex flex-wrap gap-2">
+            {searchHistory.slice(0, 8).map((historyQuery, index) => (
+              <button
+                key={index}
+                onClick={() => handleHistoryClick(historyQuery)}
+                className="bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-2 rounded-lg text-sm transition-colors"
+              >
+                {historyQuery}
+              </button>
+            ))}
           </div>
         </div>
+      )}
 
-        {/* Features */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto mb-12 sm:mb-16">
-          <div className="text-center p-6">
-            <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Search className="h-5 w-5 text-white" />
-            </div>
-            <h3 className="font-semibold text-text mb-2">Search</h3>
-            <p className="text-sm text-text-muted">Find any song instantly</p>
-          </div>
-          <div className="text-center p-6">
-            <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Heart className="h-5 w-5 text-white" />
-            </div>
-            <h3 className="font-semibold text-text mb-2">Favorites</h3>
-            <p className="text-sm text-text-muted">Save your favorite tracks</p>
-          </div>
-          <div className="text-center p-6">
-            <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Music className="h-5 w-5 text-white" />
-            </div>
-            <h3 className="font-semibold text-text mb-2">Stream</h3>
-            <p className="text-sm text-text-muted">High-quality audio streaming</p>
+      {/* Error Message */}
+      {error && (
+        <div className="max-w-2xl mx-auto mb-6">
+          <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-4 flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-red-400" />
+            <span className="text-red-300">{error}</span>
           </div>
         </div>
+      )}
 
-        {/* Error */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-8 text-center">
-            <p className="text-red-600 font-medium">{error}</p>
-          </div>
-        )}
-
-        {/* Loading */}
-        {isLoading && tracks.length === 0 && (
-          <div className="text-center py-12">
-            <div className="loading mx-auto mb-4"></div>
-            <p className="text-text-muted">Searching...</p>
-          </div>
-        )}
-
-        {/* Results */}
-        {tracks.length > 0 && (
-          <div className="mb-12">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-text">
-                Results
-              </h2>
-              <span className="text-sm text-text-muted bg-surface px-3 py-1 rounded-full">
-                {tracks.length} tracks
-              </span>
+      {/* Results */}
+      {hasSearched && (
+        <div>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-md p-2">
+              <SearchIcon className="w-5 h-5" />
             </div>
-            
-            <div className="grid grid-cols-2 sm:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 sm:gap-6">
-              {tracks.map((track, index) => (
-                <TrackCard key={`${track.id}-${index}`} track={track} />
-              ))}
-            </div>
-
-            {nextPageToken && (
-              <div className="text-center mt-8">
-                <button
-                  onClick={loadMore}
-                  disabled={isLoading}
-                  className="btn btn-primary"
-                >
-                  {isLoading ? 'Loading...' : 'Load More'}
-                </button>
-              </div>
+            <h2 className="text-2xl font-bold">
+              {isLoading ? 'Searching...' : `Results for "${query}"`}
+            </h2>
+            {isLoading && (
+              <div className="animate-spin w-5 h-5 border-2 border-cyan-400 border-t-transparent rounded-full"></div>
             )}
           </div>
-        )}
 
-        {/* Empty State */}
-        {hasSearched && tracks.length === 0 && !isLoading && !error && (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-surface rounded-lg flex items-center justify-center mx-auto mb-6">
-              <Music className="h-8 w-8 text-text-muted" />
+          {tracks.length > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              {tracks.map((track) => (
+                <TrackCard
+                  key={track.id}
+                  track={track}
+                  onPlay={() => handlePlay(track)}
+                  isFavorite={isFavorite(track.id)}
+                  onToggleFavorite={() => toggleFavorite(track)}
+                />
+              ))}
             </div>
-            <h3 className="text-xl font-semibold text-text mb-3">
-              No results found
-            </h3>
-            <p className="text-text-muted mb-6">
-              Try searching for a different term.
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="btn btn-secondary"
-            >
-              Try Again
-            </button>
-          </div>
-        )}
+          )}
 
-        {/* Welcome State */}
-        {!hasSearched && (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-6">
-              <Music className="h-8 w-8 text-accent" />
+          {nextPageToken && (
+            <div className="text-center mt-8">
+              <button
+                onClick={loadMore}
+                disabled={isLoading}
+                className="px-6 py-2 bg-cyan-500 hover:bg-cyan-400 text-black rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? 'Loading...' : 'Load More'}
+              </button>
             </div>
-            <h3 className="text-xl font-semibold text-text mb-3">
-              Welcome to KabuTune
-            </h3>
-            <p className="text-text-muted mb-6">
-              Start by searching for your favorite songs, artists, or albums.
-            </p>
-            <div className="flex flex-wrap justify-center gap-2 text-sm text-text-muted">
-              <span className="px-3 py-1 bg-surface rounded-full">Try &quot;Ed Sheeran&quot;</span>
-              <span className="px-3 py-1 bg-surface rounded-full">Try &quot;Shape of You&quot;</span>
-              <span className="px-3 py-1 bg-surface rounded-full">Try &quot;Pop Music&quot;</span>
+          )}
+
+          {!isLoading && tracks.length === 0 && !error && (
+            <div className="text-center py-12">
+              <Music className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+              <p className="text-gray-400 text-lg">No results found for &quot;{query}&quot;</p>
+              <p className="text-gray-500 text-sm mt-2">Try different keywords or check your spelling</p>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!hasSearched && !error && (
+        <div className="text-center py-12">
+          <SearchIcon className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+          <p className="text-gray-400 text-lg">Start searching for music</p>
+          <p className="text-gray-500 text-sm mt-2">Enter a song name, artist, or album above</p>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
-import Image from 'next/image';
+import React, { useState, useEffect } from 'react';
 import { 
   Play, 
   Pause, 
@@ -11,11 +10,13 @@ import {
   VolumeX,
   Shuffle,
   Repeat,
-  Repeat1,
-  List
+  List,
+  Heart
 } from 'lucide-react';
 import { useMusicPlayer } from '@/contexts/MusicPlayerContext';
+import { useFavorites } from '@/contexts/FavoritesContext';
 import { QueueList } from '@/components/QueueList';
+import { NowPlayingSheet } from '@/components/NowPlayingSheet';
 
 export function MusicPlayer() {
   const {
@@ -29,315 +30,187 @@ export function MusicPlayer() {
     toggleRepeat,
     audioRef,
   } = useMusicPlayer();
+  const { isFavorite, toggleFavorite } = useFavorites();
 
-  const { currentTrack, isPlaying, currentTime, duration, volume, isShuffled, isRepeating, queue } = state;
+  const { currentTrack, isPlaying, currentTime, duration, volume, isRepeating, queue } = state;
   const [isQueueOpen, setIsQueueOpen] = useState(false);
+  const [showNowPlaying, setShowNowPlaying] = useState(false);
+
+  // Auto-dismiss error toast after 4s
+  useEffect(() => {
+    // You can add error state management here if needed
+  }, []);
 
   if (!currentTrack) {
     return null;
   }
 
+  const currentIsFavorite = isFavorite(currentTrack.id);
+
   const formatTime = (time: number) => {
+    if (isNaN(time) || time === 0) return "0:00";
     const hours = Math.floor(time / 3600);
     const minutes = Math.floor((time % 3600) / 60);
-    const seconds = Math.floor(time % 60);
+    const seconds = Math.floor(time % 60).toString().padStart(2, "0");
+    if (hours > 0) return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds}`;
+    return `${minutes}:${seconds}`;
+  };
 
-    if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    } else {
-      return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  const getPlaybackIcon = () => {
+    if (isRepeating) {
+      return <Repeat className="w-5 h-5" />;
     }
+    return <Repeat className="w-5 h-5 opacity-50" />;
   };
 
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTime = parseFloat(e.target.value);
-    setCurrentTime(newTime);
+  const cyclePlaybackMode = () => {
+    toggleRepeat();
   };
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolume(newVolume);
-  };
+  const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
     <>
+
       <audio ref={audioRef} preload="metadata" />
-      <div className="fixed bottom-0 left-0 right-0 bg-bg/95 backdrop-blur border-t border-border p-3 z-50">
-        <div className="container">
-          
-          {/* Mobile Layout */}
-          <div className="block sm:hidden">
-            {/* Track Info */}
-            <div className="flex items-center gap-3 mb-3">
-              <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-surface">
-                <Image
-                  src={currentTrack.thumbnail}
-                  alt={currentTrack.title}
-                  fill
-                  className="object-cover"
-                  unoptimized
-                />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="font-medium text-text text-sm truncate">
-                  {currentTrack.title}
-                </h4>
-                <p className="text-xs text-text-muted truncate">
-                  {currentTrack.channel}
-                </p>
-              </div>
-              <button
-                onClick={() => setIsQueueOpen(true)}
-                className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-surface relative"
-                title={`Queue (${queue.length})`}
+      <div className="fixed bottom-0 left-0 w-full bg-black/90 text-cyan-300 shadow-2xl z-40 border-t border-gray-800">
+        <div className="w-full bg-gray-800 h-1">
+          <div className="h-full bg-cyan-500 transition-all duration-100" style={{ width: `${progressPercentage}%` }} />
+        </div>
+
+        <div className="px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3 w-full md:w-1/3 min-w-0">
+            <div className="relative">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={currentTrack.thumbnail} alt={currentTrack.title} className="w-14 h-14 rounded-lg object-cover" />
+            </div>
+            <div className="min-w-0 flex-1" onClick={() => setShowNowPlaying(true)}>
+              <p className="font-semibold text-sm truncate" title={currentTrack.title}>{currentTrack.title}</p>
+              <p className="text-xs text-gray-400 truncate" title={currentTrack.channel}>{currentTrack.channel}</p>
+            </div>
+            <button 
+              aria-label={currentIsFavorite ? "Remove from favorites" : "Add to favorites"} 
+              title={currentIsFavorite ? "Remove from favorites" : "Add to favorites"} 
+              onClick={() => toggleFavorite(currentTrack)} 
+              className={`transition-colors ${currentIsFavorite ? "text-red-400 hover:text-red-300" : "text-gray-400 hover:text-red-400"}`}
+            >
+              <Heart className={`w-5 h-5 ${currentIsFavorite ? "fill-current" : ""}`} />
+            </button>
+          </div>
+
+          <div className="flex flex-col items-center w-full md:w-1/3 max-w-md">
+            <div className="flex gap-4 items-center mb-2">
+              <button 
+                aria-label={`Playback mode: ${isRepeating ? 'repeat' : 'normal'}`} 
+                title={`Playback mode: ${isRepeating ? 'repeat' : 'normal'}`} 
+                onClick={cyclePlaybackMode} 
+                className={`transition-colors ${isRepeating ? 'text-cyan-400' : 'text-gray-500 hover:text-gray-300'}`}
               >
-                <List className="h-4 w-4" />
-                {queue.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-accent text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                    {queue.length}
-                  </span>
-                )}
+                {getPlaybackIcon()}
+              </button>
+              <button 
+                onClick={prevTrack} 
+                className="text-gray-300 hover:text-cyan-400 transition-colors" 
+                disabled={queue.length <= 1}
+              >
+                <SkipBack className="w-6 h-6" />
+              </button>
+              <button 
+                aria-label={isPlaying ? "Pause" : "Play"} 
+                title={isPlaying ? "Pause" : "Play"} 
+                onClick={togglePlayPause} 
+                className="bg-cyan-500 text-black px-3 py-3 rounded-full hover:bg-cyan-400 transition-all transform hover:scale-105 shadow-lg" 
+                  disabled={false}
+              >
+                {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ml-1" />}
+              </button>
+              <button 
+                aria-label="Next" 
+                title="Next" 
+                onClick={nextTrack} 
+                className="text-gray-300 hover:text-cyan-400 transition-colors"
+              >
+                <SkipForward className="w-6 h-6" />
+              </button>
+              <button 
+                onClick={toggleShuffle} 
+                className="text-gray-500 hover:text-gray-300 transition-colors" 
+                title="Shuffle queue"
+              >
+                <Shuffle className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Controls */}
-            <div className="flex items-center justify-center gap-4 mb-3">
-              <button
-                onClick={prevTrack}
-                className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-surface"
-              >
-                <SkipBack className="h-5 w-5" />
-              </button>
-              <button
-                onClick={togglePlayPause}
-                className="w-12 h-12 rounded-lg bg-accent hover:bg-accent-hover flex items-center justify-center"
-              >
-                {isPlaying ? (
-                  <Pause className="h-5 w-5 text-white" />
-                ) : (
-                  <Play className="h-5 w-5 text-white fill-current ml-0.5" />
-                )}
-              </button>
-              <button
-                onClick={nextTrack}
-                className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-surface"
-              >
-                <SkipForward className="h-5 w-5" />
-              </button>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="flex items-center gap-3 mb-3">
-              <span className="text-xs text-text-muted w-10 text-right font-mono">
-                {formatTime(currentTime)}
-              </span>
-              <div className="flex-1 relative">
-                <div className="w-full h-1 bg-surface rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-accent rounded-full transition-all duration-100"
-                    style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
-                  />
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max={duration || 0}
-                  value={currentTime}
-                  onChange={handleSeek}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            <div className="flex items-center gap-3 w-full">
+              <span className="text-xs text-gray-400 min-w-[35px]">{formatTime(currentTime)}</span>
+              <div className="flex-1">
+                <input 
+                  type="range" 
+                  min={0} 
+                  max={duration || 0} 
+                  value={currentTime} 
+                  onChange={(e) => setCurrentTime(parseFloat(e.target.value))} 
+                  className="slider w-full" 
+                  style={{
+                    background: `linear-gradient(to right, #06b6d4 0%, #06b6d4 ${progressPercentage}%, #374151 ${progressPercentage}%, #374151 100%)`
+                  }} 
                 />
               </div>
-              <span className="text-xs text-text-muted w-10 font-mono">
-                {formatTime(duration)}
-              </span>
-            </div>
-
-            {/* Volume */}
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setVolume(volume > 0 ? 0 : 0.7)}
-                className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-surface"
-              >
-                {volume > 0 ? (
-                  <Volume2 className="h-4 w-4" />
-                ) : (
-                  <VolumeX className="h-4 w-4" />
-                )}
-              </button>
-              <div className="flex-1 relative">
-                <div className="w-full h-1 bg-surface rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-accent rounded-full transition-all duration-100"
-                    style={{ width: `${volume * 100}%` }}
-                  />
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.1"
-                  value={volume}
-                  onChange={handleVolumeChange}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
-              </div>
+              <span className="text-xs text-gray-400 min-w-[35px]">{formatTime(duration)}</span>
             </div>
           </div>
 
-          {/* Desktop Layout */}
-          <div className="hidden sm:flex items-center gap-6">
-            {/* Track Info */}
-            <div className="flex items-center gap-4 flex-1 min-w-0">
-              <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-surface">
-                <Image
-                  src={currentTrack.thumbnail}
-                  alt={currentTrack.title}
-                  fill
-                  className="object-cover"
-                  unoptimized
-                />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="font-medium text-text text-sm truncate">
-                  {currentTrack.title}
-                </h4>
-                <p className="text-xs text-text-muted truncate">
-                  {currentTrack.channel}
-                </p>
-              </div>
-            </div>
-
-            {/* Controls */}
-            <div className="flex flex-col items-center gap-3 flex-1">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={toggleShuffle}
-                  className={`p-2 rounded-lg transition-colors ${
-                    isShuffled 
-                      ? 'text-accent bg-accent/10' 
-                      : 'text-text-muted hover:text-text hover:bg-surface'
-                  }`}
-                >
-                  <Shuffle className="h-4 w-4" />
-                </button>
-                <button 
-                  onClick={prevTrack} 
-                  className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-surface"
-                >
-                  <SkipBack className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={togglePlayPause}
-                  className="w-12 h-12 rounded-lg bg-accent hover:bg-accent-hover flex items-center justify-center"
-                >
-                  {isPlaying ? (
-                    <Pause className="h-5 w-5 text-white" />
-                  ) : (
-                    <Play className="h-5 w-5 text-white fill-current ml-0.5" />
-                  )}
-                </button>
-                <button 
-                  onClick={nextTrack} 
-                  className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-surface"
-                >
-                  <SkipForward className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={toggleRepeat}
-                  className={`p-2 rounded-lg transition-colors ${
-                    isRepeating 
-                      ? 'text-accent bg-accent/10' 
-                      : 'text-text-muted hover:text-text hover:bg-surface'
-                  }`}
-                >
-                  {isRepeating ? (
-                    <Repeat1 className="h-4 w-4" />
-                  ) : (
-                    <Repeat className="h-4 w-4" />
-                  )}
-                </button>
-                <button
-                  onClick={() => setIsQueueOpen(true)}
-                  className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-surface relative"
-                  title={`Queue (${queue.length})`}
-                >
-                  <List className="h-4 w-4" />
-                  {queue.length > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-accent text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                      {queue.length}
-                    </span>
-                  )}
-                </button>
-              </div>
-
-              {/* Progress Bar */}
-              <div className="flex items-center gap-3 w-full max-w-lg">
-                <span className="text-xs text-text-muted w-12 text-right font-mono">
-                  {formatTime(currentTime)}
-                </span>
-                <div className="flex-1 relative">
-                  <div className="w-full h-1 bg-surface rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-accent rounded-full transition-all duration-100"
-                      style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
-                    />
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max={duration || 0}
-                    value={currentTime}
-                    onChange={handleSeek}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  />
-                </div>
-                <span className="text-xs text-text-muted w-12 font-mono">
-                  {formatTime(duration)}
-                </span>
-              </div>
-            </div>
-
-            {/* Volume */}
-            <div className="flex items-center gap-3 flex-1 justify-end">
-              <button
-                onClick={() => setVolume(volume > 0 ? 0 : 0.7)}
-                className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-surface"
+          <div className="flex items-center gap-3 w-full md:w-1/3 justify-end">
+            <div className="flex items-center gap-2">
+              <button 
+                aria-label={volume === 0 ? "Unmute" : "Mute"} 
+                title={volume === 0 ? "Unmute" : "Mute"} 
+                onClick={() => setVolume(volume > 0 ? 0 : 1)} 
+                className="text-gray-300 hover:text-cyan-400 transition-colors"
               >
-                {volume > 0 ? (
-                  <Volume2 className="h-4 w-4" />
-                ) : (
-                  <VolumeX className="h-4 w-4" />
-                )}
+                {volume === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
               </button>
-              <div className="w-24 relative">
-                <div className="w-full h-1 bg-surface rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-accent rounded-full transition-all duration-100"
-                    style={{ width: `${volume * 100}%` }}
-                  />
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.1"
-                  value={volume}
-                  onChange={handleVolumeChange}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
-              </div>
-              <span className="text-xs text-text-muted w-8 font-mono">
-                {Math.round(volume * 100)}%
-              </span>
+              <input 
+                type="range" 
+                min={0} 
+                max={1} 
+                step={0.01} 
+                value={volume} 
+                onChange={(e) => setVolume(parseFloat(e.target.value))} 
+                className="w-24 slider" 
+                style={{
+                  background: `linear-gradient(to right, #06b6d4 0%, #06b6d4 ${volume * 100}%, #374151 ${volume * 100}%, #374151 100%)`
+                }} 
+              />
             </div>
+
+            <span className="text-xs text-gray-400 hidden md:block">{queue.length} in queue</span>
+
+            <button 
+              onClick={() => setIsQueueOpen(!isQueueOpen)} 
+              className={`transition-colors ${isQueueOpen ? 'text-cyan-400' : 'text-gray-300 hover:text-cyan-400'}`}
+            >
+              <List className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </div>
-      
-      {/* Queue List Modal */}
-      <QueueList 
-        isOpen={isQueueOpen} 
-        onClose={() => setIsQueueOpen(false)} 
+
+      {/* Queue */}
+      <QueueList isOpen={isQueueOpen} onClose={() => setIsQueueOpen(false)} />
+
+      {/* Now Playing Sheet for Mobile */}
+      <NowPlayingSheet 
+        isOpen={showNowPlaying} 
+        onClose={() => setShowNowPlaying(false)} 
+        track={currentTrack} 
+        isPlaying={isPlaying} 
+        progress={currentTime} 
+        duration={duration} 
+        onTogglePlay={togglePlayPause} 
+        onSeek={setCurrentTime} 
+        onNext={nextTrack} 
+        onPrev={prevTrack} 
       />
     </>
   );

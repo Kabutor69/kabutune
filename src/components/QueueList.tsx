@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { X, Play, Trash2, Music } from 'lucide-react';
+import { X, Shuffle, Pause, Play } from 'lucide-react';
 import { useMusicPlayer } from '@/contexts/MusicPlayerContext';
+import { Track } from '@/types';
 
 interface QueueListProps {
   isOpen: boolean;
@@ -10,109 +11,104 @@ interface QueueListProps {
 }
 
 export function QueueList({ isOpen, onClose }: QueueListProps) {
-  const { state, clearQueue } = useMusicPlayer();
-  const { queue, currentIndex } = state;
+  const { state, playTrack, removeFromQueue, clearQueue, shuffleQueue } = useMusicPlayer();
+  const { currentTrack, queue, isPlaying } = state;
 
-  const handleTrackClick = (index: number) => {
-    const track = queue[index];
-    if (track) {
-      const event = new CustomEvent('setCurrentIndex', { detail: { index } });
-      window.dispatchEvent(event);
-    }
+  const handlePlayTrack = (track: Track) => {
+    playTrack(track);
   };
+
+  const handleRemoveFromQueue = (e: React.MouseEvent, trackId: string) => {
+    e.stopPropagation();
+    removeFromQueue(trackId);
+  };
+
+  const getCurrentIndex = () => {
+    return queue.findIndex(track => track.id === currentTrack?.id);
+  };
+
+  const currentIndex = getCurrentIndex();
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center">
-      <div className="bg-bg/95 backdrop-blur rounded-t-lg w-full max-w-md max-h-[80vh] flex flex-col border-t border-border shadow-lg">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-              <Music className="h-4 w-4 text-white" />
-            </div>
-            <h3 className="text-lg font-semibold text-text">
-              Queue ({queue.length})
-            </h3>
-          </div>
+    <>
+      <div className="fixed inset-0 bg-black/50 z-60" onClick={onClose} />
+      <aside className="fixed right-0 bottom-0 top-0 w-[360px] max-w-[90vw] bg-black text-cyan-300 border-l border-gray-800 z-[65] flex flex-col">
+        <div className="px-4 py-3 border-b border-gray-800 flex items-center justify-between">
+          <h3 className="font-semibold text-sm">Queue ({queue.length})</h3>
           <div className="flex items-center gap-2">
-            {queue.length > 0 && (
-              <button
-                onClick={clearQueue}
-                className="p-2 rounded-lg text-red-500 hover:text-red-600 hover:bg-red-50"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            )}
             <button 
-              onClick={onClose}
-              className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-surface"
+              onClick={shuffleQueue} 
+              className="text-gray-400 hover:text-cyan-400 transition-colors p-2 rounded-lg hover:bg-gray-900" 
+              title="Shuffle queue" 
+              aria-label="Shuffle queue"
             >
-              <X className="h-4 w-4" />
+              <Shuffle className="w-4 h-4" />
+            </button>
+            <button 
+              onClick={clearQueue} 
+              className="text-gray-400 hover:text-red-400 transition-colors px-3 py-2 rounded-lg hover:bg-red-500/10 text-xs font-medium" 
+              title="Clear all songs from queue" 
+              aria-label="Clear all songs from queue"
+            >
+              Clear All
+            </button>
+            <button 
+              onClick={onClose} 
+              className="text-gray-400 hover:text-gray-200 transition-colors p-2 rounded-lg hover:bg-gray-900" 
+              title="Close queue" 
+              aria-label="Close queue"
+            >
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
-
-        {/* Queue Content */}
-        <div className="flex-1 overflow-y-auto">
-          {queue.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 px-4">
-              <div className="w-12 h-12 bg-surface rounded-lg flex items-center justify-center mb-4">
-                <Music className="h-6 w-6 text-text-muted" />
+        <div className="overflow-y-auto p-2 flex-1">
+          {queue.map((track, index) => (
+            <div
+              key={`${track.id}-${index}`}
+              className={`group flex items-center gap-3 p-2.5 cursor-pointer rounded-md hover:bg-gray-900 transition-colors border-l-2 ${
+                index === currentIndex ? "bg-gray-900 border-cyan-500" : "border-transparent"
+              }`}
+              onClick={() => handlePlayTrack(track)}
+            >
+              <div className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={track.thumbnail} alt={track.title} className="w-12 h-12 rounded-md object-cover" />
+                {index === currentIndex && (
+                  <div className="absolute inset-0 bg-cyan-500/15 rounded-md flex items-center justify-center">
+                    <div className="text-cyan-500">
+                      {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                    </div>
+                  </div>
+                )}
               </div>
-              <p className="text-text-muted text-center">
-                Your queue is empty
-              </p>
-              <p className="text-sm text-text-muted text-center mt-1">
-                Add songs to start building your playlist
-              </p>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate" title={track.title}>{track.title}</p>
+                <p className="text-xs text-gray-400 truncate" title={track.channel}>{track.channel}</p>
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemoveFromQueue(e, track.id);
+                }}
+                className="text-gray-500 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+                aria-label="Remove from queue"
+                title="Remove from queue"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
-          ) : (
-            <div className="p-2">
-              {queue.map((track, index) => (
-                <div
-                  key={`${track.id}-${index}`}
-                  onClick={() => handleTrackClick(index)}
-                  className={`flex items-center gap-3 p-3 rounded-lg transition-colors cursor-pointer ${
-                    index === currentIndex
-                      ? 'bg-accent/10 border border-accent/20'
-                      : 'hover:bg-surface'
-                  }`}
-                >
-                  <div className="flex-shrink-0">
-                    {index === currentIndex ? (
-                      <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-                        <Play className="h-4 w-4 text-white fill-current" />
-                      </div>
-                    ) : (
-                      <div className="w-8 h-8 bg-surface rounded-lg flex items-center justify-center">
-                        <span className="text-xs font-medium text-text-muted">
-                          {index + 1}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <h4 className={`font-medium truncate text-sm ${
-                      index === currentIndex
-                        ? 'text-accent'
-                        : 'text-text'
-                    }`}>
-                      {track.title}
-                    </h4>
-                    <p className="text-xs text-text-muted truncate mt-1">
-                      {track.channel}
-                    </p>
-                  </div>
-                </div>
-              ))}
+          ))}
+          {queue.length === 0 && (
+            <div className="p-8 text-center text-gray-500">
+              <p>Your queue is empty</p>
+              <p className="text-xs mt-1">Add songs to start listening</p>
             </div>
           )}
         </div>
-      </div>
-    </div>
+      </aside>
+    </>
   );
 }

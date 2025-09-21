@@ -67,26 +67,23 @@ export function TrackCard({ track, showFavorite = true }: TrackCardProps) {
 
   return (
     <div
-      className="group card card-hover cursor-pointer animate-fade-in-scale"
+      className="group card card-hover cursor-pointer"
       onClick={handlePlay}
     >
-      <div className="relative aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-950/20 dark:to-accent-950/20">
+      <div className="relative aspect-square rounded-lg overflow-hidden bg-muted">
         <Image
           src={track.thumbnail}
           alt={track.title}
           fill
-          className="object-cover group-hover:scale-110 transition-transform duration-700"
+          className="object-cover group-hover:scale-105 transition-transform duration-300"
           unoptimized
           sizes="(max-width: 480px) 50vw, (max-width: 768px) 33vw, (max-width: 1200px) 25vw, 20vw"
         />
 
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
         {/* Play Button Overlay */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-500 flex items-center justify-center">
-          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/95 hover:bg-white rounded-full flex items-center justify-center shadow-lg-xl transform scale-0 group-hover:scale-100 transition-all duration-500 hover:scale-110 group-hover:shadow-blue-glow">
-            <Play className="h-5 w-5 sm:h-6 sm:w-6 text-primary-600 fill-current ml-0.5" />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 flex items-center justify-center">
+          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg transform scale-0 group-hover:scale-100 transition-transform duration-200">
+            <Play className="h-5 w-5 text-primary fill-current ml-0.5" />
           </div>
         </div>
 
@@ -94,48 +91,32 @@ export function TrackCard({ track, showFavorite = true }: TrackCardProps) {
         {showFavorite && (
           <button
             onClick={handleFavorite}
-            className="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 sm:w-10 sm:h-10 bg-black/40 hover:bg-black/60 backdrop-blur-md rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 z-10 group/favorite"
+            className="absolute top-2 right-2 w-8 h-8 bg-black/40 hover:bg-black/60 rounded-full flex items-center justify-center transition-colors duration-200 z-10"
           >
             <Heart
-              className={`h-4 w-4 sm:h-5 sm:w-5 transition-colors duration-300 ${
+              className={`h-4 w-4 transition-colors duration-200 ${
                 isFavorite(track.id)
-                  ? 'fill-red-500 text-red-500 scale-110'
-                  : 'text-white hover:text-red-400 group-hover/favorite:scale-110'
+                  ? 'fill-red-500 text-red-500'
+                  : 'text-white hover:text-red-400'
               }`}
             />
           </button>
         )}
 
         {/* Duration Badge */}
-        <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 px-2 py-1 sm:px-3 sm:py-1.5 bg-black/80 backdrop-blur-md rounded-lg text-white text-xs sm:text-sm font-semibold shadow-lg">
+        <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/80 rounded text-white text-xs font-medium">
           {formatDuration(track.duration)}
-        </div>
-
-        {/* Loading State Overlay */}
-        <div className="absolute inset-0 bg-primary-500/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
       </div>
 
       {/* Track Info */}
-      <div className="p-4 sm:p-5 space-y-2">
-        <h3 className="font-bold text-foreground line-clamp-2 text-sm sm:text-base leading-tight group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
+      <div className="p-3 space-y-1">
+        <h3 className="font-medium text-foreground line-clamp-2 text-sm leading-tight">
           {track.title}
         </h3>
-        <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1 group-hover:text-foreground/80 transition-colors duration-300">
+        <p className="text-xs text-muted-foreground line-clamp-1">
           {track.channel}
         </p>
-        
-        {/* Additional Info */}
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span className="flex items-center space-x-1">
-            <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
-            <span>Available</span>
-          </span>
-          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            Click to play
-          </span>
-        </div>
       </div>
     </div>
   );

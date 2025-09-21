@@ -4,10 +4,9 @@ import React, { useState } from 'react';
 import { SearchBar } from '@/components/SearchBar';
 import { TrackCard } from '@/components/TrackCard';
 import { Track, SearchResponse, ApiError } from '@/types';
-import { Loader2, Music, Search, Heart, X } from 'lucide-react';
+import { Music, Search, Heart } from 'lucide-react';
 import { useMusicPlayer } from '@/contexts/MusicPlayerContext';
 
-// Force dynamic rendering
 export const dynamic = 'force-dynamic';
 
 export default function Home() {
@@ -73,118 +72,96 @@ export default function Home() {
   };
 
   return (
-    <div className={`min-h-screen bg-background ${state.currentTrack ? 'pb-24' : ''}`}>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        {/* Hero Section */}
-        <div className="text-center mb-16 sm:mb-20">
-          {/* Logo and Branding */}
-          <div className="flex items-center justify-center mb-8">
-            <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center shadow-sm">
-              <Music className="h-8 w-8 text-primary-foreground" />
+    <div className="min-h-screen bg-bg" style={{ paddingBottom: state.currentTrack ? '80px' : '0' }}>
+      <div className="container py-8 sm:py-12 sm:py-16">
+        
+        {/* Header */}
+        <div className="text-center mb-12 sm:mb-16 sm:mb-20">
+          <div className="flex items-center justify-center mb-6">
+            <div className="w-12 h-12 bg-accent rounded-lg flex items-center justify-center">
+              <Music className="h-6 w-6 text-white" />
             </div>
           </div>
-
-          {/* Main Heading */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground mb-4">
+          
+          <h1 className="text-4xl sm:text-5xl sm:text-6xl font-bold text-text mb-4">
             KabuTune
           </h1>
           
-          {/* Subtitle */}
-          <p className="text-lg sm:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
-            Discover and stream music from YouTube with a clean, modern interface.
+          <p className="text-lg sm:text-xl text-text-muted mb-8 max-w-2xl mx-auto">
+            Discover and stream music from YouTube with a clean, simple interface.
           </p>
 
-          {/* Search Bar */}
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-lg mx-auto">
             <SearchBar onSearch={handleSearch} onCancel={handleCancel} isLoading={isLoading} />
-          </div>
-
-          {/* Feature Highlights */}
-          <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
-            <div className="flex flex-col items-center space-y-3 p-6 rounded-lg bg-muted border border-border">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Search className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <h3 className="font-medium text-foreground">Smart Search</h3>
-              <p className="text-sm text-muted-foreground text-center">Find any song, artist, or album instantly</p>
-            </div>
-            <div className="flex flex-col items-center space-y-3 p-6 rounded-lg bg-muted border border-border">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Heart className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <h3 className="font-medium text-foreground">Favorites</h3>
-              <p className="text-sm text-muted-foreground text-center">Save your favorite tracks for later</p>
-            </div>
-            <div className="flex flex-col items-center space-y-3 p-6 rounded-lg bg-muted border border-border">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Music className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <h3 className="font-medium text-foreground">High Quality</h3>
-              <p className="text-sm text-muted-foreground text-center">Stream in the best available quality</p>
-            </div>
           </div>
         </div>
 
-        {/* Error State */}
-        {error && (
-          <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-8">
-            <div className="flex items-center space-x-3">
-              <div className="w-5 h-5 bg-destructive rounded-full flex items-center justify-center">
-                <X className="h-3 w-3 text-destructive-foreground" />
-              </div>
-              <p className="text-destructive font-medium">{error}</p>
+        {/* Features */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto mb-12 sm:mb-16">
+          <div className="text-center p-6">
+            <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center mx-auto mb-4">
+              <Search className="h-5 w-5 text-white" />
             </div>
+            <h3 className="font-semibold text-text mb-2">Search</h3>
+            <p className="text-sm text-text-muted">Find any song instantly</p>
+          </div>
+          <div className="text-center p-6">
+            <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center mx-auto mb-4">
+              <Heart className="h-5 w-5 text-white" />
+            </div>
+            <h3 className="font-semibold text-text mb-2">Favorites</h3>
+            <p className="text-sm text-text-muted">Save your favorite tracks</p>
+          </div>
+          <div className="text-center p-6">
+            <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center mx-auto mb-4">
+              <Music className="h-5 w-5 text-white" />
+            </div>
+            <h3 className="font-semibold text-text mb-2">Stream</h3>
+            <p className="text-sm text-text-muted">High-quality audio streaming</p>
+          </div>
+        </div>
+
+        {/* Error */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-8 text-center">
+            <p className="text-red-600 font-medium">{error}</p>
           </div>
         )}
 
-        {/* Loading State */}
+        {/* Loading */}
         {isLoading && tracks.length === 0 && (
-          <div className="flex items-center justify-center py-16">
-            <div className="flex flex-col items-center space-y-4">
-              <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-              <div className="text-center">
-                <span className="text-muted-foreground font-medium">Searching...</span>
-                <p className="text-sm text-muted-foreground mt-1">Finding the best results</p>
-              </div>
-            </div>
+          <div className="text-center py-12">
+            <div className="loading mx-auto mb-4"></div>
+            <p className="text-text-muted">Searching...</p>
           </div>
         )}
 
         {/* Results */}
         {tracks.length > 0 && (
-          <div className="mb-16">
+          <div className="mb-12">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
-                Search Results
+              <h2 className="text-2xl sm:text-3xl font-bold text-text">
+                Results
               </h2>
-              <div className="text-sm text-muted-foreground bg-muted px-3 py-1 rounded-full">
-                {tracks.length} tracks found
-              </div>
+              <span className="text-sm text-text-muted bg-surface px-3 py-1 rounded-full">
+                {tracks.length} tracks
+              </span>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
+            
+            <div className="grid grid-cols-2 sm:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 sm:gap-6">
               {tracks.map((track, index) => (
-                <div key={`${track.id}-${index}`}>
-                  <TrackCard track={track} />
-                </div>
+                <TrackCard key={`${track.id}-${index}`} track={track} />
               ))}
             </div>
 
-            {/* Load More Button */}
             {nextPageToken && (
-              <div className="text-center mt-12">
+              <div className="text-center mt-8">
                 <button
                   onClick={loadMore}
                   disabled={isLoading}
-                  className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn btn-primary"
                 >
-                  {isLoading ? (
-                    <div className="flex items-center space-x-2">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Loading...</span>
-                    </div>
-                  ) : (
-                    'Load More Tracks'
-                  )}
+                  {isLoading ? 'Loading...' : 'Load More'}
                 </button>
               </div>
             )}
@@ -193,19 +170,19 @@ export default function Home() {
 
         {/* Empty State */}
         {hasSearched && tracks.length === 0 && !isLoading && !error && (
-          <div className="text-center py-16">
-            <div className="w-16 h-16 bg-muted rounded-xl flex items-center justify-center mx-auto mb-6">
-              <Music className="h-8 w-8 text-muted-foreground" />
+          <div className="text-center py-12">
+            <div className="w-16 h-16 bg-surface rounded-lg flex items-center justify-center mx-auto mb-6">
+              <Music className="h-8 w-8 text-text-muted" />
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-3">
+            <h3 className="text-xl font-semibold text-text mb-3">
               No results found
             </h3>
-            <p className="text-muted-foreground max-w-md mx-auto mb-6">
-              Try searching for a different term or check your spelling.
+            <p className="text-text-muted mb-6">
+              Try searching for a different term.
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="btn-secondary"
+              className="btn btn-secondary"
             >
               Try Again
             </button>
@@ -214,20 +191,20 @@ export default function Home() {
 
         {/* Welcome State */}
         {!hasSearched && (
-          <div className="text-center py-16">
-            <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-6">
-              <Music className="h-8 w-8 text-primary" />
+          <div className="text-center py-12">
+            <div className="w-16 h-16 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-6">
+              <Music className="h-8 w-8 text-accent" />
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-3">
+            <h3 className="text-xl font-semibold text-text mb-3">
               Welcome to KabuTune
             </h3>
-            <p className="text-muted-foreground max-w-md mx-auto mb-6">
+            <p className="text-text-muted mb-6">
               Start by searching for your favorite songs, artists, or albums.
             </p>
-            <div className="flex flex-wrap justify-center gap-2 text-sm text-muted-foreground">
-              <span className="px-3 py-1 bg-muted rounded-full">Try &quot;Ed Sheeran&quot;</span>
-              <span className="px-3 py-1 bg-muted rounded-full">Try &quot;Shape of You&quot;</span>
-              <span className="px-3 py-1 bg-muted rounded-full">Try &quot;Pop Music&quot;</span>
+            <div className="flex flex-wrap justify-center gap-2 text-sm text-text-muted">
+              <span className="px-3 py-1 bg-surface rounded-full">Try &quot;Ed Sheeran&quot;</span>
+              <span className="px-3 py-1 bg-surface rounded-full">Try &quot;Shape of You&quot;</span>
+              <span className="px-3 py-1 bg-surface rounded-full">Try &quot;Pop Music&quot;</span>
             </div>
           </div>
         )}

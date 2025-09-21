@@ -12,15 +12,12 @@ interface TrackCardProps {
   showFavorite?: boolean;
 }
 
-// Utility function to format duration
 const formatDuration = (duration: string): string => {
   if (!duration || duration === '0:00' || duration === '0') return '--:--';
   
-  // If duration is already in HH:MM:SS or MM:SS format, return as is
   if (duration.includes(':')) {
     const parts = duration.split(':');
     if (parts.length === 3) {
-      // HH:MM:SS format
       const hours = parseInt(parts[0]);
       const minutes = parseInt(parts[1]);
       const seconds = parseInt(parts[2]);
@@ -30,12 +27,10 @@ const formatDuration = (duration: string): string => {
         return `${minutes}:${seconds.toString().padStart(2, '0')}`;
       }
     } else if (parts.length === 2) {
-      // MM:SS format
       return duration;
     }
   }
   
-  // If it's a number (seconds), convert to MM:SS or HH:MM:SS
   const totalSeconds = parseInt(duration);
   if (!isNaN(totalSeconds) && totalSeconds > 0) {
     const hours = Math.floor(totalSeconds / 3600);
@@ -62,20 +57,21 @@ export function TrackCard({ track, showFavorite = true }: TrackCardProps) {
 
   const handleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation();
-    toggleFavorite(track);
+    try {
+      toggleFavorite(track);
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    }
   };
 
   return (
-    <div
-      className="group card card-hover cursor-pointer"
-      onClick={handlePlay}
-    >
-      <div className="relative aspect-square rounded-lg overflow-hidden bg-muted">
+    <div className="card cursor-pointer group" onClick={handlePlay}>
+      <div className="relative aspect-square bg-surface">
         <Image
           src={track.thumbnail}
           alt={track.title}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          className="object-cover group-hover:scale-105 transition-transform duration-200"
           unoptimized
           sizes="(max-width: 480px) 50vw, (max-width: 768px) 33vw, (max-width: 1200px) 25vw, 20vw"
         />
@@ -83,7 +79,7 @@ export function TrackCard({ track, showFavorite = true }: TrackCardProps) {
         {/* Play Button Overlay */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 flex items-center justify-center">
           <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg transform scale-0 group-hover:scale-100 transition-transform duration-200">
-            <Play className="h-5 w-5 text-primary fill-current ml-0.5" />
+            <Play className="h-5 w-5 text-accent fill-current ml-0.5" />
           </div>
         </div>
 
@@ -111,10 +107,10 @@ export function TrackCard({ track, showFavorite = true }: TrackCardProps) {
 
       {/* Track Info */}
       <div className="p-3 space-y-1">
-        <h3 className="font-medium text-foreground line-clamp-2 text-sm leading-tight">
+        <h3 className="font-medium text-text text-sm leading-tight line-clamp-2">
           {track.title}
         </h3>
-        <p className="text-xs text-muted-foreground line-clamp-1">
+        <p className="text-xs text-text-muted line-clamp-1">
           {track.channel}
         </p>
       </div>

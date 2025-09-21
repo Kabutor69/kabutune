@@ -1,10 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Music, Heart, Compass, Search, Menu, X } from 'lucide-react';
-import { useState } from 'react';
 
 export function Header() {
   const pathname = usePathname();
@@ -17,24 +16,23 @@ export function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 bg-bg/95 backdrop-blur border-b border-border">
+      <div className="container">
         <div className="flex h-16 items-center justify-between">
+          
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 group">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Music className="h-5 w-5 text-primary-foreground" />
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
+              <Music className="h-5 w-5 text-white" />
             </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-bold text-foreground">
-                KabuTune
-              </span>
-              <span className="text-xs text-muted-foreground hidden sm:block">Music Streaming</span>
+            <div>
+              <div className="text-lg font-bold text-text">KabuTune</div>
+              <div className="text-xs text-text-muted hidden sm:block">Music Streaming</div>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-1">
+          <nav className="hidden md:flex items-center gap-1">
             {navigation.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
@@ -43,14 +41,16 @@ export function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center space-x-2 ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-primary text-primary-foreground'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                      ? 'bg-accent text-white'
+                      : 'text-text-muted hover:text-text hover:bg-surface'
                   }`}
                 >
-                  <Icon className="h-4 w-4" />
-                  <span>{item.name}</span>
+                  <div className="flex items-center gap-2">
+                    <Icon className="h-4 w-4" />
+                    <span>{item.name}</span>
+                  </div>
                 </Link>
               );
             })}
@@ -59,7 +59,7 @@ export function Header() {
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            className="md:hidden p-2 rounded-lg text-text-muted hover:text-text hover:bg-surface"
           >
             {isMobileMenuOpen ? (
               <X className="h-5 w-5" />
@@ -71,8 +71,8 @@ export function Header() {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-border bg-background/95 backdrop-blur">
-            <nav className="flex flex-col space-y-1 py-4">
+          <div className="md:hidden border-t border-border">
+            <nav className="flex flex-col py-4">
               {navigation.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
@@ -82,10 +82,10 @@ export function Header() {
                     key={item.name}
                     href={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                    className={`flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors ${
                       isActive
-                        ? 'bg-primary text-primary-foreground'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                        ? 'bg-accent text-white'
+                        : 'text-text-muted hover:text-text hover:bg-surface'
                     }`}
                   >
                     <Icon className="h-5 w-5" />

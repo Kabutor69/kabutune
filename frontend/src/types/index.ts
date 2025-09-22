@@ -4,6 +4,7 @@ export interface Track {
   channel: string;
   thumbnail: string;
   duration: string;
+  durationSeconds?: number;
   url: string;
   views?: number;
   isFavorite?: boolean;

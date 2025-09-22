@@ -27,6 +27,22 @@ const formatTime = (seconds?: number) => {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
+const parseDurationStringToSeconds = (duration?: string) => {
+  if (!duration) return 0;
+  // Supports mm:ss or hh:mm:ss
+  const parts = duration.split(':').map((p) => parseInt(p, 10)).filter((n) => !Number.isNaN(n));
+  if (parts.length === 3) {
+    return parts[0] * 3600 + parts[1] * 60 + parts[2];
+  }
+  if (parts.length === 2) {
+    return parts[0] * 60 + parts[1];
+  }
+  if (parts.length === 1) {
+    return parts[0];
+  }
+  return 0;
+};
+
 const formatViews = (views?: number) => {
   if (!views) return "";
   if (views >= 1000000) return `${(views / 1000000).toFixed(1)}M views`;
@@ -98,10 +114,14 @@ export function TrackCard({
         </p>
 
         <div className="flex items-center text-gray-500 text-[10px] mt-auto pt-2 border-t border-gray-800">
-          {track.duration ? (
+          {(track.durationSeconds || track.duration) ? (
             <span className="flex items-center mr-3">
               <Clock className="w-3 h-3 mr-1" />
-              {formatTime(parseInt(track.duration))}
+              {formatTime(
+                typeof track.durationSeconds === 'number' && track.durationSeconds > 0
+                  ? track.durationSeconds
+                  : parseDurationStringToSeconds(track.duration)
+              )}
             </span>
           ) : null}
           {track.views ? (

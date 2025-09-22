@@ -1,23 +1,24 @@
 import { Router } from 'express';
 import ytSearch from 'yt-search';
-import ytdl from '@distube/ytdl-core';
 
 const router = Router();
 
 router.get('/:id', async (req, res) => {
   try {
     const videoId = String(req.params.id || '');
-    if (!videoId) return res.status(400).json({ error: 'Video ID is required' });
+    const q = String(req.query.q || '');
+    if (!videoId && !q) return res.status(400).json({ error: 'Video ID or q is required' });
 
-    // Use ytdl-core to get the video title without API limits
-    const info = await ytdl.getInfo(videoId);
-    const title = info.videoDetails.title;
-    const author = info.videoDetails.author?.name || '';
-
-    const query = `${title.split(' ').slice(0, 3).join(' ')} ${author}`.trim();
-    const results = await ytSearch({ query, category: 'music' });
+    let results: any;
+    if (q) {
+      results = await ytSearch({ query: q, category: 'music' });
+    } else {
+      // fallback: derive a short token from videoId (not calling getInfo to avoid 429)
+      const token = videoId.slice(0, 5);
+      results = await ytSearch({ query: token, category: 'music' });
+    }
     const tracks = (results.videos || [])
-      .filter((v: any) => v.videoId !== videoId)
+      .filter((v: any) => !videoId || v.videoId !== videoId)
       .slice(0, 10)
       .map((v: any) => ({
         id: v.videoId,
@@ -25,6 +26,7 @@ router.get('/:id', async (req, res) => {
         channel: v.author?.name ?? '',
         thumbnail: v.thumbnail,
         duration: v.timestamp || '0:00',
+        durationSeconds: Number(v.seconds ?? 0),
         url: v.url,
       }));
 

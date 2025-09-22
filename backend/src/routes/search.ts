@@ -19,6 +19,7 @@ router.get('/', async (req, res) => {
       channel: v.author?.name ?? '',
       thumbnail: v.thumbnail,
       duration: v.timestamp || '0:00',
+      durationSeconds: Number(v.seconds ?? 0),
       url: v.url,
     }));
 

@@ -9,14 +9,7 @@ router.get('/:id', async (req, res) => {
     if (!videoId) return res.status(400).json({ error: 'Video ID is required' });
     if (!ytdl.validateID(videoId)) return res.status(400).json({ error: 'Invalid video ID' });
 
-    const videoInfo = await ytdl.getInfo(videoId);
-    if (!videoInfo) return res.status(404).json({ error: 'Video not found' });
-
-    const audioFormats = ytdl.filterFormats(videoInfo.formats, 'audioonly');
-    if (audioFormats.length === 0) return res.status(400).json({ error: 'No audio format available' });
-
-    const format = ytdl.chooseFormat(audioFormats, { quality: 'highestaudio' });
-    if (!format) return res.status(400).json({ error: 'No suitable audio format found' });
+    // Avoid a heavy getInfo call; let ytdl select audioonly internally with filter options
 
     res.setHeader('Content-Type', 'audio/mpeg');
     res.setHeader('Accept-Ranges', 'bytes');
@@ -31,7 +24,12 @@ router.get('/:id', async (req, res) => {
       },
     };
 
-    const audioStream = ytdl(videoId, { format, requestOptions });
+    const audioStream = ytdl(videoId, {
+      filter: 'audioonly',
+      quality: 'highestaudio',
+      requestOptions,
+      highWaterMark: 1 << 25,
+    });
     audioStream.on('error', (err) => {
       console.error('ytdl stream error:', err);
       if (!res.headersSent) {

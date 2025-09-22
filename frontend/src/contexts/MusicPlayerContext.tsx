@@ -299,7 +299,8 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
 
   const fetchRelatedTracks = async (videoId: string) => {
     try {
-      const response = await fetch(`${API_BASE}/api/related/${videoId}`);
+      const q = state.currentTrack ? encodeURIComponent(`${state.currentTrack.title} ${state.currentTrack.channel}`) : '';
+      const response = await fetch(`${API_BASE}/api/related/${videoId}${q ? `?q=${q}` : ''}`);
       if (response.ok) {
         const data = await response.json();
         if (data.tracks && data.tracks.length > 0) {

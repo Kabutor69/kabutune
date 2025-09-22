@@ -62,21 +62,21 @@ export function TrackCard({
 }: TrackCardProps) {
   return (
     <div
-      className="group bg-gray-900/60 border border-gray-800 rounded-2xl p-3 hover:bg-gray-900 hover:border-gray-700 transition-colors h-full flex flex-col hover-lift"
+      className="group bg-gray-950/60 border border-gray-800/80 rounded-xl p-2.5 hover:bg-gray-900/70 hover:border-gray-700 transition-colors h-full flex flex-col shadow-sm hover:shadow-md"
       role="article"
       aria-label={`${track.title} by ${track.channel}`}
     >
-      <div className="relative mb-3">
+      <div className="relative mb-2.5">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={track.thumbnail}
           alt={track.title}
-          className="w-full aspect-square rounded-xl object-cover"
+          className="w-full aspect-square rounded-lg object-cover"
         />
-        <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center bg-black/35">
+        <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center bg-black/35 backdrop-blur-[1px]">
           <button
             onClick={onPlay}
-            className="bg-cyan-500 hover:bg-cyan-400 text-black p-3 rounded-full shadow-lg"
+            className="bg-cyan-500 hover:bg-cyan-400 text-black p-2.5 rounded-full shadow-lg"
             aria-label="Play"
             title="Play"
           >
@@ -84,12 +84,12 @@ export function TrackCard({
           </button>
         </div>
         {typeof indexBadge !== "undefined" && (
-          <div className="absolute top-2 right-2 bg-black/70 border border-gray-700 rounded-md px-1.5 py-0.5 text-[10px] font-semibold">
+          <div className="absolute top-1.5 right-1.5 bg-black/70 border border-gray-700 rounded px-1.5 py-0.5 text-[10px] font-semibold">
             {indexBadge}
           </div>
         )}
         {isActive && (
-          <div className="absolute top-2 left-2 bg-cyan-500 text-black rounded-md px-1.5 py-0.5 text-[10px] font-semibold flex items-center gap-1">
+          <div className="absolute top-1.5 left-1.5 bg-cyan-500 text-black rounded px-1.5 py-0.5 text-[10px] font-semibold flex items-center gap-1">
             {isPlaying ? (
               <>
                 <div className="w-1.5 h-1.5 bg-black rounded-full animate-pulse"></div>
@@ -106,14 +106,14 @@ export function TrackCard({
       </div>
 
       <div className="flex-1 flex flex-col">
-        <h3 className="text-sm font-semibold text-cyan-200 line-clamp-2 mb-0.5" title={track.title}>
+        <h3 className="text-[13px] font-semibold text-cyan-200/90 line-clamp-2 mb-0.5" title={track.title}>
           {track.title}
         </h3>
-        <p className="text-xs text-gray-400 truncate mb-2" title={track.channel}>
+        <p className="text-[11px] text-gray-400 truncate mb-2" title={track.channel}>
           {track.channel}
         </p>
 
-        <div className="flex items-center text-gray-500 text-[10px] mt-auto pt-2 border-t border-gray-800">
+        <div className="flex items-center text-gray-500 text-[10px] mt-auto pt-1.5 border-t border-gray-800/80">
           {(track.durationSeconds || track.duration) ? (
             <span className="flex items-center mr-3">
               <Clock className="w-3 h-3 mr-1" />

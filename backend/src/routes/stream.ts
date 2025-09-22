@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import ytdl from '@distube/ytdl-core';
+import * as playdl from 'play-dl';
 
 const router = Router();
 
@@ -11,7 +12,8 @@ router.get('/:id', async (req, res) => {
 
     // Avoid a heavy getInfo call; let ytdl select audioonly internally with filter options
 
-    res.setHeader('Content-Type', 'audio/mpeg');
+    // Default content type; most YouTube audio streams are webm/opus
+    res.setHeader('Content-Type', 'audio/webm');
     res.setHeader('Accept-Ranges', 'bytes');
     res.setHeader('Cache-Control', 'public, max-age=3600');
 
@@ -56,6 +58,28 @@ router.get('/:id', async (req, res) => {
         audioStream.on('error', handleError);
         audioStream.pipe(res);
         return;
+      }
+      if (!res.headersSent && statusCode === 429) {
+        // Fallback to play-dl stream once
+        try {
+          const source = await playdl.stream(`https://www.youtube.com/watch?v=${videoId}`, {
+            discordPlayerCompatibility: false,
+            quality: 2,
+            requestOptions: { headers: baseHeaders },
+          } as any);
+          // Map type to content-type
+          const t = (source as any).type as string | undefined;
+          if (!res.headersSent) {
+            if (t === 'mp3') res.setHeader('Content-Type', 'audio/mpeg');
+            else if (t === 'aac') res.setHeader('Content-Type', 'audio/aac');
+            else res.setHeader('Content-Type', 'audio/webm');
+          }
+          (source.stream as any).on('error', handleError);
+          (source.stream as any).pipe(res);
+          return;
+        } catch (e) {
+          console.error('play-dl fallback failed:', e);
+        }
       }
       if (!res.headersSent) {
         const status = statusCode === 429 ? 429 : 500;

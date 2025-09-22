@@ -98,8 +98,8 @@ function playerReducer(state: PlayerState, action: PlayerAction): PlayerState {
         !state.queue.some(existing => existing.id === track.id)
       );
       const updatedQueue = [...state.queue, ...newTracks];
-      // Keep only last 50 tracks for memory efficiency
-      const limitedQueue = updatedQueue.slice(-50);
+      // Keep only last 10 tracks for memory efficiency
+      const limitedQueue = updatedQueue.slice(-10);
       return {
         ...state,
         queue: limitedQueue,
@@ -314,9 +314,12 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
 
   // Auto-generate queue when it's getting low
   const checkAndGenerateQueue = useCallback(() => {
-    if (state.currentTrack && state.queue.length - state.currentIndex <= 3) {
-      console.log('Queue getting low, fetching more tracks...');
-      fetchRelatedTracks(state.currentTrack.id);
+    if (state.currentTrack) {
+      const remaining = state.queue.length - state.currentIndex - 1;
+      if (remaining <= 2) {
+        console.log('Only', remaining, 'tracks left, fetching more (target queue size 10)...');
+        fetchRelatedTracks(state.currentTrack.id);
+      }
     }
   }, [state.currentTrack, state.queue.length, state.currentIndex]);
 
@@ -325,20 +328,20 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     checkAndGenerateQueue();
   }, [state.currentTrack, state.currentIndex, state.queue.length, checkAndGenerateQueue]);
 
-  // More aggressive queue generation - fetch when we have 5 or fewer tracks left
+  // Aggressive queue generation - ensure we refill when 2 or fewer tracks left
   useEffect(() => {
     if (state.currentTrack && state.queue.length > 0) {
       const tracksLeft = state.queue.length - state.currentIndex - 1;
-      if (tracksLeft <= 5) {
+      if (tracksLeft <= 2) {
         console.log(`Only ${tracksLeft} tracks left, fetching more...`);
         fetchRelatedTracks(state.currentTrack.id);
       }
     }
   }, [state.currentIndex, state.queue.length, state.currentTrack]);
 
-  // Cleanup queue periodically for memory efficiency
+  // Cleanup queue periodically for memory efficiency (cap at 10)
   useEffect(() => {
-    if (state.queue.length > 30) {
+    if (state.queue.length > 10) {
       console.log('Queue getting large, cleaning up...');
       dispatch({ type: 'CLEANUP_QUEUE' });
     }

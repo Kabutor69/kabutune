@@ -193,6 +193,7 @@ function playerReducer(state: PlayerState, action: PlayerAction): PlayerState {
 export function MusicPlayerProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(playerReducer, initialState);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || '';
 
   // Load player state from localStorage on mount
   useEffect(() => {
@@ -272,7 +273,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     const audio = audioRef.current;
     if (!audio || !state.currentTrack) return;
 
-    audio.src = `/api/stream/${state.currentTrack.id}`;
+    audio.src = `${API_BASE}/api/stream/${state.currentTrack.id}`;
     audio.load();
   }, [state.currentTrack]);
 
@@ -298,7 +299,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
 
   const fetchRelatedTracks = async (videoId: string) => {
     try {
-      const response = await fetch(`/api/related/${videoId}`);
+      const response = await fetch(`${API_BASE}/api/related/${videoId}`);
       if (response.ok) {
         const data = await response.json();
         if (data.tracks && data.tracks.length > 0) {

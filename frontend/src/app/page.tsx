@@ -15,6 +15,7 @@ import {
 export const dynamic = 'force-dynamic';
 
 export default function Home() {
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || '';
   const { playTrack } = useMusicPlayer();
   const { isFavorite, toggleFavorite } = useFavorites();
   
@@ -60,7 +61,7 @@ export default function Home() {
     saveToSearchHistory(searchTerm);
 
     try {
-      const res = await fetch(`/api/search?q=${encodeURIComponent(searchTerm)}&limit=30&t=${Date.now()}`);
+      const res = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(searchTerm)}&limit=30&t=${Date.now()}`);
       const data = await res.json();
       
       if (data.error) {
@@ -108,7 +109,7 @@ export default function Home() {
 
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&pageToken=${nextPageToken}`);
+      const response = await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(query)}&pageToken=${nextPageToken}`);
       const data: SearchResponse | ApiError = await response.json();
 
       if (!response.ok) {

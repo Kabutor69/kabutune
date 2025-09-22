@@ -1,7 +1,7 @@
 {
-  "name": "kabutune",
-  "version": "0.1.0",
+  "name": "kabutune-frontend",
   "private": true,
+  "version": "0.1.0",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
@@ -9,7 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@distube/ytdl-core": "^4.16.12",
     "clsx": "^2.1.1",
     "lucide-react": "^0.544.0",
     "next": "15.5.3",
@@ -30,3 +29,5 @@
     "typescript": "^5"
   }
 }
+
+

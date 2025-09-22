@@ -38,7 +38,7 @@ router.get('/:id', async (req, res) => {
       highWaterMark: 1 << 25,
     });
     let retried = false;
-    const handleError = (err: unknown) => {
+    const handleError = async (err: unknown) => {
       console.error('ytdl stream error:', err);
       const statusCode = (err as any)?.statusCode;
       if (!retried && statusCode === 429) {
@@ -55,7 +55,7 @@ router.get('/:id', async (req, res) => {
           requestOptions: altReq,
           highWaterMark: 1 << 25,
         });
-        audioStream.on('error', handleError);
+        audioStream.on('error', handleError as any);
         audioStream.pipe(res);
         return;
       }
@@ -74,7 +74,7 @@ router.get('/:id', async (req, res) => {
             else if (t === 'aac') res.setHeader('Content-Type', 'audio/aac');
             else res.setHeader('Content-Type', 'audio/webm');
           }
-          (source.stream as any).on('error', handleError);
+          (source.stream as any).on('error', handleError as any);
           (source.stream as any).pipe(res);
           return;
         } catch (e) {
@@ -88,7 +88,7 @@ router.get('/:id', async (req, res) => {
         res.end();
       }
     };
-    audioStream.on('error', handleError);
+    audioStream.on('error', handleError as any);
     audioStream.pipe(res);
   } catch (err) {
     console.error('Stream API error:', err);

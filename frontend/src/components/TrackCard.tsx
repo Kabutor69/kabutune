@@ -29,7 +29,7 @@ const formatTime = (seconds?: number) => {
 
 const parseDurationStringToSeconds = (duration?: string) => {
   if (!duration) return 0;
-  // Supports mm:ss or hh:mm:ss
+ 
   const parts = duration.split(':').map((p) => parseInt(p, 10)).filter((n) => !Number.isNaN(n));
   if (parts.length === 3) {
     return parts[0] * 3600 + parts[1] * 60 + parts[2];

@@ -10,30 +10,6 @@ export interface Track {
   isFavorite?: boolean;
 }
 
-export interface YouTubeSearchResult {
-  id: {
-    videoId: string;
-  };
-  snippet: {
-    title: string;
-    channelTitle: string;
-    thumbnails: {
-      medium: {
-        url: string;
-      };
-    };
-  };
-}
-
-export interface YouTubeSearchResponse {
-  items: YouTubeSearchResult[];
-  nextPageToken?: string;
-}
-
-export interface YouTubeRelatedResponse {
-  items: YouTubeSearchResult[];
-}
-
 export interface SearchResponse {
   tracks: Track[];
   nextPageToken?: string;

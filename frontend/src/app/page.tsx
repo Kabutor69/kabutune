@@ -49,6 +49,11 @@ export default function Home() {
     localStorage.setItem('searchHistory', JSON.stringify(newHistory));
   };
 
+  const clearSearchHistory = () => {
+    setSearchHistory([]);
+    localStorage.removeItem('searchHistory');
+  };
+
   const handleSearch = async (searchQuery?: string) => {
     const searchTerm = searchQuery || query.trim();
     if (!searchTerm) return;
@@ -157,7 +162,7 @@ export default function Home() {
           {query && (
             <button
               onClick={clearSearch}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text:white"
             >
               <X className="w-5 h-5" />
             </button>
@@ -183,7 +188,15 @@ export default function Home() {
       {/* Search History */}
       {searchHistory.length > 0 && !hasSearched && (
         <div className="max-w-2xl mx-auto mb-8">
-          <h3 className="text-lg font-semibold mb-4 text-gray-300">Recent Searches</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-300">Recent Searches</h3>
+            <button
+              onClick={clearSearchHistory}
+              className="text-xs text-gray-400 hover:text-gray-200 underline"
+            >
+              Clear history
+            </button>
+          </div>
           <div className="flex flex-wrap gap-2">
             {searchHistory.slice(0, 8).map((historyQuery, index) => (
               <button

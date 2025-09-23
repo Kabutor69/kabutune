@@ -38,7 +38,7 @@ export function MusicPlayer() {
 
   // Auto-dismiss error toast after 4s
   useEffect(() => {
-    // You can add error state management here if needed
+    // add error state management if needed
   }, []);
 
   if (!currentTrack) {

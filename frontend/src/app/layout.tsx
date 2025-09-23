@@ -1,3 +1,4 @@
+// Root layout: wraps app with providers and global UI shell
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -89,15 +90,10 @@ export default function RootLayout({
           <MusicPlayerProvider>
             <FavoritesProvider>
               <div className="min-h-screen bg-black text-cyan-300">
-                {/* Header */}
                 <Header />
-                
-                {/* Main Content */}
                 <main className="pb-32">
                   {children}
                 </main>
-                
-                {/* Music Player */}
                 <MusicPlayer />
               </div>
             </FavoritesProvider>

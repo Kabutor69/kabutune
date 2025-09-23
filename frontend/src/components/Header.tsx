@@ -11,7 +11,7 @@ export function Header() {
   const linkClasses = (path: string) =>
     `flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
       pathname === path
-        ? "bg-cyan-500 text-black"
+        ? "bg-cyan-500 text-black shadow-[0_0_20px_rgba(6,182,212,0.3)]"
         : "text-cyan-300 hover:text-cyan-200 hover:bg-gray-800"
     }`;
 
@@ -22,6 +22,7 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <span className="text-lg font-bold gradient-text">KabuTune</span>
+          <span className="ml-2 hidden sm:inline text-xs text-gray-500">simple music</span>
         </Link>
 
         <div className="flex items-center gap-2">

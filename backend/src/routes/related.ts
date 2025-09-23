@@ -1,10 +1,8 @@
-// GET /api/related/:id: returns related tracks via Piped (or by q)
+// GET /api/related/:id: gets related tracks via yt-search using q or id token
 import { Router } from 'express';
-import { fetch } from 'undici';
+import ytSearch from 'yt-search';
 
 const router = Router();
-
-const PIPED_BASE = process.env.PIPED_BASE || 'https://piped.video';
 
 router.get('/:id', async (req, res) => {
   try {
@@ -12,27 +10,26 @@ router.get('/:id', async (req, res) => {
     const q = String(req.query.q || '');
     if (!videoId && !q) return res.status(400).json({ error: 'Video ID or q is required' });
 
-    let data: any[] = [];
+    let results: any;
     if (q) {
-      const s = await fetch(`${PIPED_BASE}/api/v1/search?q=${encodeURIComponent(q)}&filter=music&region=US`);
-      data = s.ok ? (await s.json() as any[]) : [];
+      results = await ytSearch({ query: q, category: 'music' } as any);
     } else {
-      const r = await fetch(`${PIPED_BASE}/api/v1/related/${encodeURIComponent(videoId)}`);
-      data = r.ok ? (await r.json() as any[]) : [];
+      const token = videoId.slice(0, 5);
+      results = await ytSearch({ query: token, category: 'music' } as any);
     }
-
-    const tracks = Array.isArray(data) ? data
-      .filter((v: any) => v && v.id && v.id !== videoId)
+    const tracks = (results.videos || [])
+      .filter((v: any) => !videoId || v.videoId !== videoId)
       .slice(0, 10)
       .map((v: any) => ({
-        id: v.id,
+        id: v.videoId,
         title: v.title,
-        channel: v.uploader || v.uploaderName || '',
-        thumbnail: (v.thumbnails && v.thumbnails[0]) || v.thumbnail || '',
-        duration: v.duration ? new Date(v.duration * 1000).toISOString().slice(14, 19) : '0:00',
-        durationSeconds: v.duration || 0,
-        url: `https://www.youtube.com/watch?v=${v.id}`,
-      })) : [];
+        channel: v.author?.name ?? '',
+        thumbnail: v.thumbnail,
+        duration: v.timestamp || '0:00',
+        durationSeconds: Number(v.seconds ?? 0),
+        url: v.url,
+        views: typeof v.views === 'number' ? v.views : undefined,
+      }));
 
     return res.json({ tracks });
   } catch (err) {

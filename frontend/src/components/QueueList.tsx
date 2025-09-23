@@ -11,11 +11,12 @@ interface QueueListProps {
 }
 
 export function QueueList({ isOpen, onClose }: QueueListProps) {
-  const { state, playTrack, removeFromQueue, clearQueue, shuffleQueue } = useMusicPlayer();
+  const { state, removeFromQueue, clearQueue, shuffleQueue } = useMusicPlayer();
   const { currentTrack, queue, isPlaying } = state;
 
-  const handlePlayTrack = (track: Track) => {
-    playTrack(track);
+  const handlePlayTrackAtIndex = (index: number) => {
+    const event = new CustomEvent('setCurrentIndex', { detail: { index } });
+    window.dispatchEvent(event);
   };
 
   const handleRemoveFromQueue = (e: React.MouseEvent, trackId: string) => {
@@ -71,7 +72,7 @@ export function QueueList({ isOpen, onClose }: QueueListProps) {
               className={`group flex items-center gap-3 p-2.5 cursor-pointer rounded-md hover:bg-gray-900 transition-colors border-l-2 ${
                 index === currentIndex ? "bg-gray-900 border-cyan-500" : "border-transparent"
               }`}
-              onClick={() => handlePlayTrack(track)}
+              onClick={() => handlePlayTrackAtIndex(index)}
             >
               <div className="relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}

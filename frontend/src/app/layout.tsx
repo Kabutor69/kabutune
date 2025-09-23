@@ -91,7 +91,7 @@ export default function RootLayout({
             <FavoritesProvider>
               <div className="min-h-screen bg-black text-cyan-300">
                 <Header />
-                <main className="pb-32">
+                <main className="max-w-7xl mx-auto px-4 sm:px-6 pb-32">
                   {children}
                 </main>
                 <MusicPlayer />

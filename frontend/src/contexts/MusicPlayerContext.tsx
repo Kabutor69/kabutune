@@ -93,16 +93,12 @@ function playerReducer(state: PlayerState, action: PlayerAction): PlayerState {
         volume: action.payload,
       };
     case 'ADD_TO_QUEUE':
-      // Filter out duplicates and limit queue size for memory efficiency
       const newTracks = action.payload.filter(track => 
         !state.queue.some(existing => existing.id === track.id)
       );
-      const updatedQueue = [...state.queue, ...newTracks];
-      // Keep only last 10 tracks for memory efficiency
-      const limitedQueue = updatedQueue.slice(-10);
       return {
         ...state,
-        queue: limitedQueue,
+        queue: [...state.queue, ...newTracks],
       };
     case 'NEXT_TRACK':
       if (state.queue.length === 0) return state;
@@ -116,8 +112,6 @@ function playerReducer(state: PlayerState, action: PlayerAction): PlayerState {
             isPlaying: true,
           };
         }
-        // If no repeat and at end, stay at current track but keep playing
-        // The auto-generation will handle adding more tracks
         return {
           ...state,
           isPlaying: true,
@@ -173,18 +167,7 @@ function playerReducer(state: PlayerState, action: PlayerAction): PlayerState {
         isRepeating: !state.isRepeating,
       };
     case 'CLEANUP_QUEUE':
-      // Keep only current track and next 20 tracks for memory efficiency
-      const currentIndex = state.currentIndex;
-      const startIndex = Math.max(0, currentIndex - 5); // Keep 5 tracks before current
-      const endIndex = Math.min(state.queue.length, currentIndex + 20); // Keep 20 tracks after current
-      const cleanedQueue = state.queue.slice(startIndex, endIndex);
-      const newCurrentIndex = currentIndex - startIndex;
-      return {
-        ...state,
-        queue: cleanedQueue,
-        currentIndex: newCurrentIndex,
-        currentTrack: cleanedQueue[newCurrentIndex] || null,
-      };
+      return state;
     default:
       return state;
   }
@@ -195,7 +178,6 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   const audioRef = useRef<HTMLAudioElement>(null);
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE || '';
 
-  // Load player state from localStorage on mount
   useEffect(() => {
     const savedState = localStorage.getItem('kabutune-player');
     if (savedState) {
@@ -210,12 +192,10 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     }
   }, []);
 
-  // Save volume to localStorage when it changes
   useEffect(() => {
     localStorage.setItem('kabutune-player', JSON.stringify({ volume: state.volume }));
   }, [state.volume]);
 
-  // Handle audio events
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -229,18 +209,13 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     };
 
     const handleEnded = () => {
-      // Always try to play next track for nonstop playback
       if (state.queue.length > 0 && state.currentIndex < state.queue.length - 1) {
-        // Play next track in queue
         dispatch({ type: 'NEXT_TRACK' });
       } else if (state.currentTrack) {
-        // At end of queue - fetch more tracks and continue
-        console.log('End of queue reached, fetching more tracks...');
         fetchRelatedTracks(state.currentTrack.id).then(() => {
-          // After fetching, try to play next track
           setTimeout(() => {
             dispatch({ type: 'NEXT_TRACK' });
-          }, 1000); // Small delay to ensure tracks are added
+          }, 1000);
         });
       }
     };
@@ -268,28 +243,26 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     };
   }, [state.currentTrack, state.queue, state.currentIndex]);
 
-  // Update audio source when current track changes
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !state.currentTrack) return;
 
     audio.src = `${API_BASE}/api/stream/${state.currentTrack.id}`;
     audio.load();
-  }, [state.currentTrack]);
+    audio.play().catch(() => {});
+  }, [state.currentTrack, API_BASE]);
 
-  // Handle play/pause
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     if (state.isPlaying) {
-      audio.play().catch(console.error);
+      audio.play().catch(() => {});
     } else {
       audio.pause();
     }
   }, [state.isPlaying]);
 
-  // Handle volume changes
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -312,42 +285,28 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     }
   };
 
-  // Auto-generate queue when it's getting low
   const checkAndGenerateQueue = useCallback(() => {
     if (state.currentTrack) {
       const remaining = state.queue.length - state.currentIndex - 1;
       if (remaining <= 2) {
-        console.log('Only', remaining, 'tracks left, fetching more (target queue size 10)...');
         fetchRelatedTracks(state.currentTrack.id);
       }
     }
   }, [state.currentTrack, state.queue.length, state.currentIndex]);
 
-  // Auto-generate queue when current track changes
   useEffect(() => {
     checkAndGenerateQueue();
   }, [state.currentTrack, state.currentIndex, state.queue.length, checkAndGenerateQueue]);
 
-  // Aggressive queue generation - ensure we refill when 2 or fewer tracks left
   useEffect(() => {
     if (state.currentTrack && state.queue.length > 0) {
       const tracksLeft = state.queue.length - state.currentIndex - 1;
       if (tracksLeft <= 2) {
-        console.log(`Only ${tracksLeft} tracks left, fetching more...`);
         fetchRelatedTracks(state.currentTrack.id);
       }
     }
   }, [state.currentIndex, state.queue.length, state.currentTrack]);
 
-  // Cleanup queue periodically for memory efficiency (cap at 10)
-  useEffect(() => {
-    if (state.queue.length > 10) {
-      console.log('Queue getting large, cleaning up...');
-      dispatch({ type: 'CLEANUP_QUEUE' });
-    }
-  }, [state.queue.length]);
-
-  // Listen for queue track selection events
   useEffect(() => {
     const handleSetCurrentIndex = (event: CustomEvent) => {
       const { index } = event.detail;
@@ -361,22 +320,16 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   }, []);
 
   const playTrack = (track: Track) => {
-    // Check if track is already in queue
     const existingIndex = state.queue.findIndex(t => t.id === track.id);
     if (existingIndex !== -1) {
       dispatch({ type: 'SET_CURRENT_INDEX', payload: existingIndex });
       return;
     }
-
-    // Clear current queue and set new queue with just this track
-    // This ensures playing from pages clears the queue and generates new related tracks
     dispatch({ type: 'SET_QUEUE', payload: [track] });
-    
-    // Ensure it starts playing immediately
     setTimeout(() => {
       const audio = audioRef.current;
       if (audio && audio.paused) {
-        audio.play().catch(console.error);
+        audio.play().catch(() => {});
       }
     }, 100);
   };
@@ -405,32 +358,23 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   };
 
   const addToQueue = (tracks: Track[]) => {
-    // Filter out tracks that already exist in queue
     const newTracks = tracks.filter(track => 
       !state.queue.some(existingTrack => existingTrack.id === track.id)
     );
-    
     if (newTracks.length > 0) {
-      console.log(`Adding ${newTracks.length} new tracks to queue (${tracks.length - newTracks.length} duplicates skipped)`);
       dispatch({ type: 'ADD_TO_QUEUE', payload: newTracks });
-    } else {
-      console.log('All tracks already in queue, skipping');
     }
   };
 
   const playAll = (tracks: Track[]) => {
     if (tracks.length === 0) return;
-    
-    // Clear current queue and set new queue
     dispatch({ type: 'CLEAR_QUEUE' });
     dispatch({ type: 'SET_QUEUE', payload: tracks });
     dispatch({ type: 'SET_CURRENT_INDEX', payload: 0 });
-    
-    // Start playing immediately
     setTimeout(() => {
       const audio = audioRef.current;
       if (audio && audio.paused) {
-        audio.play().catch(console.error);
+        audio.play().catch(() => {});
       }
     }, 100);
   };
@@ -450,8 +394,6 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   const removeFromQueue = (trackId: string) => {
     const newQueue = state.queue.filter(track => track.id !== trackId);
     dispatch({ type: 'SET_QUEUE', payload: newQueue });
-    
-    // If we removed the current track, move to next or stop
     if (state.currentTrack?.id === trackId) {
       if (newQueue.length > 0) {
         const newIndex = Math.min(state.currentIndex, newQueue.length - 1);
